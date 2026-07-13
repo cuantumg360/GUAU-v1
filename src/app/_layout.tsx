@@ -40,6 +40,7 @@ function RootNavigator() {
     >
       <Stack.Screen name="reminder/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="reminder/[id]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="activity/[id]" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }

@@ -53,7 +53,8 @@ futuras) pero no retrasa lo principal.
 | Analítica | ✅ Taxonomía + emisión con RLS | `analytics.ts`, migración 3 |
 | Privacidad (RLS, storage privado, borrado de cuenta) | ✅ Verificado e2e | migraciones, Edge Function `delete-account` |
 | Calendario + recordatorios + notificaciones | ✅ CRUD, repetición, avisos locales, verificado e2e (Etapa 3) | `(tabs)/agenda.tsx`, `features/reminders/*`, migración 5 |
-| Escáneres / actividades / rachas / recuerdos | ⛔ Detrás de feature flag; contratos y modelo de datos preparados | docs 07–13, migraciones futuras |
+| Actividades + actividad diaria + rachas + recompensas | ✅ Contenido, recomendación determinista, racha con protección de reloj, recompensas idempotentes; verificado e2e (Etapas 4+5) | `(tabs)/vinculo.tsx`, `features/activities/*`, migraciones 6–8 |
+| Escáneres / recuerdos | ⛔ Detrás de feature flag; contratos y modelo de datos preparados | docs 07–13, migraciones futuras |
 
 Ninguna función principal está falseada: las que aún no existen se muestran en la Home
 como "en construcción" gobernadas por flags de servidor, sin botones sin función.

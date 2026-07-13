@@ -133,6 +133,30 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
 - **Motivo:** evita dobles avisos y días perdidos en cambios de DST. Verificado con tests
   del salto CET/CEST de Madrid.
 
+## D-016 · Inmutabilidad del ledger: bloquear solo UPDATE (2026-07-13)
+
+- **Contexto:** el test e2e del hito de racha reveló que el trigger que bloqueaba
+  UPDATE **y DELETE** en `paw_ledger` impedía la cascada de borrado de cuenta para
+  usuarios con movimientos de Huellas → la eliminación RGPD fallaría.
+- **Decisión:** el trigger bloquea solo UPDATE. La garantía append-only para clientes
+  la da la RLS (solo SELECT propio; sin políticas de INSERT/UPDATE/DELETE), así que
+  ningún cliente puede borrar filas. El DELETE a nivel de motor se permite únicamente
+  para la cascada de supresión de cuenta.
+- **Verificado:** hito concede 1 Huella + 1 grant + 1 ledger; idempotente; UPDATE sigue
+  bloqueado; cascada de borrado con ledger presente funciona. Migración 8.
+
+## D-017 · Actividad diaria determinista + protección de reloj de racha (2026-07-13)
+
+- **Decisión:** la actividad diaria se elige con reglas deterministas en cliente
+  (`src/core/recommendation.ts`, testeado) y se persiste en `daily_recommendations`.
+  La racha se actualiza **solo** vía `complete_daily_activity()` (definer), que calcula
+  "hoy" con la zona horaria del perfil en el **servidor** (no con el reloj del
+  dispositivo) y es idempotente por día vía `unique(user_id, local_date)`.
+- **Motivo:** adelantar el reloj local no infla la racha; la racha no sube por abrir la
+  app ni por insertar filas (no hay política de INSERT en completions). Verificado e2e.
+- **Recompensas provisionales** (streak_3/7/14/30 → 1/2/3/5 Huellas) marcadas
+  `is_provisional`; cantidades sujetas a análisis de economía.
+
 ## D-012 · Tests de lógica con Vitest; jest-expo pospuesto (2026-07-13)
 
 - **Decisión:** Vitest cubre `src/core` (dinero, fechas, validación). Los tests de

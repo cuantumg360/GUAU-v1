@@ -7,6 +7,7 @@ import { Card } from '@/design/components/Card';
 import { Screen } from '@/design/components/Screen';
 import { useTheme } from '@/design/ThemeContext';
 import { radius, spacing } from '@/design/tokens';
+import { DailyActivityCard } from '@/features/activities/DailyActivityCard';
 import { Mascot } from '@/features/character/Mascot';
 import { usePetPhotoUrl, usePrimaryPet } from '@/features/pets/api';
 import { useFeatureFlags, usePawBalance } from '@/lib/remoteConfig';
@@ -84,6 +85,8 @@ export default function Home() {
           </View>
         </Card>
       ) : null}
+
+      {flagsQuery.data?.activities ? <DailyActivityCard /> : null}
 
       {upcoming.length > 0 ? (
         <Card>

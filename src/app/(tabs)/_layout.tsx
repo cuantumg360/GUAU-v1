@@ -15,6 +15,7 @@ export default function TabsLayout() {
   if (ready && !session) return <Redirect href="/welcome" />;
 
   const calendarEnabled = flagsQuery.data?.calendar === true;
+  const activitiesEnabled = flagsQuery.data?.activities === true;
 
   return (
     <Tabs
@@ -39,6 +40,14 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" color={color} size={size} />,
           // La pestaña solo aparece si el feature flag de servidor está activo.
           href: calendarEnabled ? undefined : null,
+        }}
+      />
+      <Tabs.Screen
+        name="vinculo"
+        options={{
+          title: t('activities.tab_title'),
+          tabBarIcon: ({ color, size }) => <Ionicons name="flame-outline" color={color} size={size} />,
+          href: activitiesEnabled ? undefined : null,
         }}
       />
       <Tabs.Screen

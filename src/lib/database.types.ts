@@ -10,13 +10,137 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          category: Database["public"]["Enums"]["activity_category"]
+          closing_question: string
+          comfort_signals: string[]
+          common_mistakes: string[]
+          context: string | null
+          created_at: string
+          description: string
+          difficulty: number
+          duration_min: number
+          expected_outcome: string | null
+          id: string
+          materials: string[]
+          min_activity_level: Database["public"]["Enums"]["activity_level"]
+          objective: string
+          precautions: string | null
+          preparation: string | null
+          published: boolean
+          review_status: Database["public"]["Enums"]["activity_review_status"]
+          slug: string
+          steps: string[]
+          stop_signals: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["activity_category"]
+          closing_question: string
+          comfort_signals?: string[]
+          common_mistakes?: string[]
+          context?: string | null
+          created_at?: string
+          description: string
+          difficulty: number
+          duration_min: number
+          expected_outcome?: string | null
+          id?: string
+          materials?: string[]
+          min_activity_level?: Database["public"]["Enums"]["activity_level"]
+          objective: string
+          precautions?: string | null
+          preparation?: string | null
+          published?: boolean
+          review_status?: Database["public"]["Enums"]["activity_review_status"]
+          slug: string
+          steps?: string[]
+          stop_signals?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["activity_category"]
+          closing_question?: string
+          comfort_signals?: string[]
+          common_mistakes?: string[]
+          context?: string | null
+          created_at?: string
+          description?: string
+          difficulty?: number
+          duration_min?: number
+          expected_outcome?: string | null
+          id?: string
+          materials?: string[]
+          min_activity_level?: Database["public"]["Enums"]["activity_level"]
+          objective?: string
+          precautions?: string | null
+          preparation?: string | null
+          published?: boolean
+          review_status?: Database["public"]["Enums"]["activity_review_status"]
+          slug?: string
+          steps?: string[]
+          stop_signals?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      activity_completions: {
+        Row: {
+          activity_id: string
+          created_at: string
+          dog_response: string | null
+          id: string
+          local_date: string
+          pet_id: string | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          dog_response?: string | null
+          id?: string
+          local_date: string
+          pet_id?: string | null
+          source?: string
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          dog_response?: string | null
+          id?: string
+          local_date?: string
+          pet_id?: string | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_completions_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_completions_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       analytics_events: {
         Row: {
           app_version: string | null
@@ -130,6 +254,41 @@ export type Database = {
           version?: string
         }
         Relationships: []
+      }
+      daily_recommendations: {
+        Row: {
+          activity_id: string
+          created_at: string
+          id: string
+          local_date: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: string
+          created_at?: string
+          id?: string
+          local_date: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          activity_id?: string
+          created_at?: string
+          id?: string
+          local_date?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_recommendations_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       entitlements: {
         Row: {
@@ -570,11 +729,132 @@ export type Database = {
           },
         ]
       }
+      reward_definitions: {
+        Row: {
+          activates_at: string | null
+          active: boolean
+          amount: number | null
+          claim_mode: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          is_provisional: boolean
+          milestone_streak: number | null
+          reward_type: Database["public"]["Enums"]["reward_type"]
+          title_key: string
+        }
+        Insert: {
+          activates_at?: string | null
+          active?: boolean
+          amount?: number | null
+          claim_mode?: string
+          created_at?: string
+          expires_at?: string | null
+          id: string
+          is_provisional?: boolean
+          milestone_streak?: number | null
+          reward_type: Database["public"]["Enums"]["reward_type"]
+          title_key: string
+        }
+        Update: {
+          activates_at?: string | null
+          active?: boolean
+          amount?: number | null
+          claim_mode?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          is_provisional?: boolean
+          milestone_streak?: number | null
+          reward_type?: Database["public"]["Enums"]["reward_type"]
+          title_key?: string
+        }
+        Relationships: []
+      }
+      reward_grants: {
+        Row: {
+          claimed_at: string | null
+          granted_at: string
+          id: string
+          reward_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          granted_at?: string
+          id?: string
+          reward_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          claimed_at?: string | null
+          granted_at?: string
+          id?: string
+          reward_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_grants_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "reward_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      streaks: {
+        Row: {
+          best_count: number
+          current_count: number
+          last_completed_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          best_count?: number
+          current_count?: number
+          last_completed_date?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          best_count?: number
+          current_count?: number
+          last_completed_date?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      complete_daily_activity: {
+        Args: {
+          p_activity_id: string
+          p_dog_response?: string
+          p_source?: string
+        }
+        Returns: {
+          best_count: number
+          current_count: number
+          last_completed_date: string | null
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "streaks"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       credit_paws: {
         Args: {
           p_amount: number
@@ -639,7 +919,19 @@ export type Database = {
       validate_custom_topup: { Args: { p_paws: number }; Returns: number }
     }
     Enums: {
+      activity_category:
+        | "confidence"
+        | "play"
+        | "relax"
+        | "calm"
+        | "communication"
+        | "cooperation"
       activity_level: "low" | "medium" | "high" | "unknown"
+      activity_review_status:
+        | "draft"
+        | "pending_review"
+        | "reviewed"
+        | "blocked"
       field_source: "user" | "document" | "ai"
       field_status: "confirmed" | "pending" | "rejected"
       paw_tx_kind:
@@ -669,6 +961,7 @@ export type Database = {
       reminder_source: "manual" | "booklet"
       reminder_status: "pending" | "completed" | "snoozed" | "cancelled"
       reproductive_status: "intact" | "neutered" | "unknown"
+      reward_type: "paws" | "badge" | "character_unlock" | "cosmetic"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -796,7 +1089,21 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      activity_category: [
+        "confidence",
+        "play",
+        "relax",
+        "calm",
+        "communication",
+        "cooperation",
+      ],
       activity_level: ["low", "medium", "high", "unknown"],
+      activity_review_status: [
+        "draft",
+        "pending_review",
+        "reviewed",
+        "blocked",
+      ],
       field_source: ["user", "document", "ai"],
       field_status: ["confirmed", "pending", "rejected"],
       paw_tx_kind: [
@@ -828,6 +1135,7 @@ export const Constants = {
       reminder_source: ["manual", "booklet"],
       reminder_status: ["pending", "completed", "snoozed", "cancelled"],
       reproductive_status: ["intact", "neutered", "unknown"],
+      reward_type: ["paws", "badge", "character_unlock", "cosmetic"],
     },
   },
 } as const

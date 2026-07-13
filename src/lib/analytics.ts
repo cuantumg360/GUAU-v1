@@ -22,6 +22,12 @@ export type AnalyticsEvent =
   | 'reminder_completed'
   | 'reminder_snoozed'
   | 'reminder_deleted'
+  | 'daily_activity_viewed'
+  | 'activity_opened'
+  | 'daily_activity_completed'
+  | 'daily_activity_changed'
+  | 'streak_incremented'
+  | 'reward_granted'
   | 'signout'
   | 'account_delete_requested';
 
