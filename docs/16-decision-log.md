@@ -183,6 +183,22 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
   stack (`/dog`) accesible desde la tarjeta del perro en Inicio. Tabs: Inicio · Agenda ·
   Vínculo · Recuerdos · Ajustes (5, límite premium).
 
+## D-021 · Monetización UI con adapter de compras mock explícito (2026-07-13)
+
+- **Contexto:** las cuentas de desarrollador de tienda (Apple/Google) no existen aún;
+  el brief permite implementar la interfaz real + adapter + mock explícito + estado de
+  no disponibilidad + documentación de activación.
+- **Decisión:** `PurchaseAdapter` (contrato único: comprar suscripción/Huellas,
+  restaurar) con `mockPurchaseAdapter` que devuelve `unavailable`. La UI (paywall, packs,
+  recarga) es completa y muestra precios definitivos del servidor; al pulsar comprar,
+  muestra un estado honesto "compras aún no disponibles". **Ningún derecho se concede
+  desde el cliente.** El adapter real (tienda + webhooks + validación en servidor) se
+  enchufa sin tocar la UI.
+- **Verificado e2e:** precios correctos desde servidor (19,95 / 165,95; packs 30 %); el
+  cliente no puede concederse Pro (RLS 42501) ni cambiar precios; `validate_custom_topup`
+  es solo-servidor (el cliente recibe permission denied — posición deseada) y la
+  prevalidación de recarga en cliente está cubierta por unit tests.
+
 ## D-012 · Tests de lógica con Vitest; jest-expo pospuesto (2026-07-13)
 
 - **Decisión:** Vitest cubre `src/core` (dinero, fechas, validación). Los tests de

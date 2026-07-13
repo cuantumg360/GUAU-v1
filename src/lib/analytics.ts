@@ -31,6 +31,12 @@ export type AnalyticsEvent =
   | 'memory_created'
   | 'memory_version_saved'
   | 'memory_deleted'
+  | 'paywall_viewed'
+  | 'plan_selected'
+  | 'purchase_started'
+  | 'purchase_unavailable'
+  | 'paw_pack_viewed'
+  | 'paw_pack_selected'
   | 'signout'
   | 'account_delete_requested';
 

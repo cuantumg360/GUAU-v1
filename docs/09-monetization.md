@@ -56,9 +56,18 @@ Interfaz compatible con tiendas: compra, renovación, restauración, cancelació
 reembolso, grace period, billing retry, expiración, upgrade/downgrade, cambio
 mensual/anual, validación en servidor, webhooks, idempotencia. **Nunca** se concede Pro,
 Huellas o recompensas de pago solo por una respuesta local del dispositivo:
-`entitlements` y `credit_paws` se escriben desde webhooks verificados (service_role). Se
-implementará con un adapter real + mock explícito documentado (sin flujos que incumplan
-políticas de distribución).
+`entitlements` y `credit_paws` se escriben desde webhooks verificados (service_role).
+
+**Implementado (Etapa 10, UI):** contrato `PurchaseAdapter`
+(`src/features/billing/purchases.ts`) con `mockPurchaseAdapter` que devuelve
+`unavailable`. Pantallas completas: paywall (mensual/anual con ahorro real calculado
+desde el servidor), packs de Huellas, recarga personalizada (prevalidación en cliente
+con `validateCustomTopup`, validación vinculante en servidor con la función
+`validate_custom_topup` que es **solo service_role**), e historial de movimientos del
+ledger. Al pulsar comprar, el mock muestra "compras aún no disponibles". Activación del
+adapter real (RevenueCat/StoreKit/Play Billing + webhooks): sustituir `purchases` sin
+tocar la UI. Verificado e2e: precios correctos, el cliente no puede concederse Pro ni
+alterar precios (RLS).
 
 ## Entitlements
 

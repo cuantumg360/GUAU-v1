@@ -49,6 +49,7 @@ futuras) pero no retrasa lo principal.
 | Personaje virtual v0 | ✅ Estados + regla sanitaria | `features/character/Mascot.tsx` |
 | Economía de Huellas (ledger) | ✅ Backend atómico verificado | migración 2, funciones RPC |
 | Catálogo de planes/packs/costes | ✅ En servidor, precios correctos | migración 2, tests `pricing.test.ts` |
+| Paywall + compra de Huellas (UI) | ✅ Planes, packs, recarga personalizada, historial; abstracción de compras con adapter mock y estado "no disponible"; verificado e2e (Etapa 10 UI) | `paywall.tsx`, `paws.tsx`, `paw-history.tsx`, `features/billing/*` |
 | Feature flags y config remota | ✅ Legibles, gobiernan la Home | migración 1, `remoteConfig.ts` |
 | Analítica | ✅ Taxonomía + emisión con RLS | `analytics.ts`, migración 3 |
 | Privacidad (RLS, storage privado, borrado de cuenta) | ✅ Verificado e2e | migraciones, Edge Function `delete-account` |

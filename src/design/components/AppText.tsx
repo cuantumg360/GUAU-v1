@@ -4,7 +4,7 @@ import { useTheme } from '@/design/ThemeContext';
 import { typography } from '@/design/tokens';
 
 type Variant = keyof typeof typography;
-type Tone = 'default' | 'secondary' | 'primary' | 'danger' | 'health' | 'onPrimary';
+type Tone = 'default' | 'secondary' | 'primary' | 'danger' | 'health' | 'onPrimary' | 'success' | 'warning';
 
 type Props = TextProps & {
   variant?: Variant;
@@ -20,6 +20,8 @@ export function AppText({ variant = 'body', tone = 'default', style, ...rest }: 
     danger: colors.danger,
     health: colors.health,
     onPrimary: colors.onPrimary,
+    success: colors.success,
+    warning: colors.warning,
   }[tone];
 
   return <Text {...rest} style={[typography[variant], { color }, style]} />;

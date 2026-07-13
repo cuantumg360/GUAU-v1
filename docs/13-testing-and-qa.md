@@ -40,8 +40,8 @@ genera el bundle completo (compila de extremo a extremo).
 | 9 | Incremento de racha | ⛔ Etapa 5 |
 | 10 | Concesión de recompensa sin duplicados | 🟡 `credit_paws` idempotente ya verificado |
 | 11–12 | Recuerdo texto/voz | ⛔ Etapa 6 |
-| 13 | Compra de Pro | ⛔ Etapa 10 |
-| 14 | Compra de Huellas | ⛔ Etapa 10 |
+| 13 | Compra de Pro | 🟡 UI + abstracción; precios verificados e2e; compra real tras adapter de tienda |
+| 14 | Compra de Huellas | 🟡 UI (packs + recarga) + prevalidación; precios/descuentos verificados; compra real tras adapter |
 | 15 | Consumo de Huellas | ✅ `spend_paws` verificado e2e |
 | 16 | Reintento sin doble cobro | ✅ idempotencia verificada e2e |
 | 17 | Eliminación de cuenta | ✅ verificado e2e (borrado + login imposible) |

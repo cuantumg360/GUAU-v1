@@ -45,6 +45,9 @@ function RootNavigator() {
       <Stack.Screen name="activity/[id]" options={{ presentation: 'modal' }} />
       <Stack.Screen name="memory/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="memory/[id]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="paws" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="paw-history" options={{ presentation: 'modal' }} />
       <Stack.Screen
         name="dog"
         options={{

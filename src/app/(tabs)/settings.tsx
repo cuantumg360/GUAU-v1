@@ -11,7 +11,7 @@ import { Screen } from '@/design/components/Screen';
 import { spacing } from '@/design/tokens';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { track } from '@/lib/analytics';
-import { usePawBalance } from '@/lib/remoteConfig';
+import { useFeatureFlags, usePawBalance } from '@/lib/remoteConfig';
 import { supabase } from '@/lib/supabase';
 
 export default function Settings() {
@@ -19,6 +19,8 @@ export default function Settings() {
   const router = useRouter();
   const { session } = useAuth();
   const pawQuery = usePawBalance();
+  const flagsQuery = useFeatureFlags();
+  const billingEnabled = flagsQuery.data?.paywall === true;
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
@@ -67,6 +69,13 @@ export default function Settings() {
         <Row label={t('settings.language')} value={t('settings.language_value')} />
         <Row label={t('settings.version')} value={Constants.expoConfig?.version ?? '0.1.0'} />
       </Card>
+
+      {billingEnabled ? (
+        <View style={styles.actions}>
+          <Button label={t('billing.open_plans')} onPress={() => router.push('/paywall')} />
+          <Button label={t('billing.open_paws')} variant="secondary" onPress={() => router.push('/paws')} />
+        </View>
+      ) : null}
 
       <Card health>
         <AppText variant="heading" tone="health">
