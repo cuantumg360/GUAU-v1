@@ -1,0 +1,114 @@
+# 16 — Decision log
+
+Registro de decisiones relevantes. Cada entrada indica contexto, decisión, motivo y
+cómo revertirla. Las decisiones estratégicas llevan además alternativas evaluadas.
+
+---
+
+## D-001 · Stack por defecto (2026-07-13)
+
+- **Contexto:** repositorio vacío, sin arquitectura previa aprovechable.
+- **Decisión:** Expo SDK 57 + React Native 0.86 + TypeScript estricto + expo-router;
+  backend Supabase (Postgres 17, Auth, Storage, Edge Functions); TanStack Query; Zod;
+  i18next; Vitest para lógica pura.
+- **Motivo:** es exactamente la arquitectura por defecto que fija el brief (móvil
+  moderna, tipada, multiplataforma, PostgreSQL, funciones de servidor). Plantilla
+  oficial estable, sin dependencias experimentales.
+- **Reversión:** el dominio está aislado en `src/core` y `src/features`; la capa de
+  datos pasa por `src/lib/supabase.ts`, sustituible por otro proveedor Postgres.
+
+## D-002 · Reutilizar el proyecto Supabase "guau v1" (2026-07-13)
+
+- **Contexto:** existía un proyecto pausado con ese nombre en la cuenta del propietario.
+- **Decisión:** restaurarlo y usarlo como único backend (región `eu-north-1`, UE).
+- **Motivo:** creado para este producto; restaurar no genera coste nuevo; región RGPD.
+- **Reversión:** exportar esquema (está en `supabase/migrations/`) y datos a otro
+  proyecto; las claves del cliente se cambian en `.env`.
+
+## D-003 · Retirar el prototipo previo de la base de datos (2026-07-13)
+
+- **Contexto:** el proyecto contenía `pets` y `scans` creadas sin migraciones, con 0
+  filas verificadas, PK `text` y sin modelo de procedencia ni economía.
+- **Decisión:** `drop table` de ambas en la migración `20260713105900`.
+- **Motivo:** esquema incompatible con los requisitos (procedencia, confirmación
+  humana, ledger); sin datos que preservar.
+- **Reversión:** git conserva la migración; el esquema antiguo era trivial (8 columnas).
+
+## D-004 · Conservar el event trigger `ensure_rls` heredado (2026-07-13)
+
+- **Decisión:** mantenerlo (activa RLS automáticamente en cada tabla nueva) y revocar
+  su ejecución vía RPC.
+- **Motivo:** defensa en profundidad alineada con nuestra política "RLS en todo".
+- **Reversión:** `drop event trigger ensure_rls;`.
+
+## D-005 · Ledger de Huellas con cuenta materializada + funciones definer (2026-07-13)
+
+- **Alternativas:** (a) saldo calculado siempre desde el ledger; (b) tabla de saldo
+  actualizada por el cliente; (c) ledger append-only + cuenta materializada bloqueada
+  por fila y funciones `SECURITY DEFINER` con idempotency key.
+- **Decisión:** (c). El cliente solo lee; `spend_paws` es atómica y devuelve el
+  movimiento original ante reintentos; `credit_paws` exige `service_role`; el ledger
+  tiene trigger que impide UPDATE/DELETE incluso a roles elevados.
+- **Motivo:** (a) encarece cada lectura; (b) es manipulable. (c) cumple "sin doble
+  cobro, sin saldos negativos, sin manipulación local".
+- **Reversión:** las funciones encapsulan el contrato; puede migrarse a otro motor
+  manteniendo la firma RPC.
+
+## D-006 · Costes provisionales de operaciones (2026-07-13)
+
+- **Decisión:** sembrar `operation_costs` (physical_scan=2, food_scan=1,
+  booklet_scan=2 Huellas) con `is_provisional=true`.
+- **Motivo:** el brief prohíbe fijar cantidades definitivas sin análisis de economía;
+  las cifras son configurables desde servidor y están marcadas como provisionales.
+- **Reversión:** `update operation_costs set paw_cost=…` (sin desplegar código).
+
+## D-007 · Límite de mascotas configurable en servidor (2026-07-13)
+
+- **Decisión:** `app_config['limits.max_pets_free']` (provisional: 3) aplicado por
+  trigger en el insert; el cliente no conoce el número.
+- **Motivo:** el brief prohíbe inventar límites comerciales hardcodeados.
+
+## D-008 · Onboarding conversacional de una pregunta por pantalla (2026-07-13)
+
+- **Contexto:** investigación Mobbin (Fi, Amazon, Walmart, Taobao; ver doc 03).
+- **Decisión:** pasos conversacionales (nombre → sexo/esterilización → nacimiento
+  exacto o aproximado → raza/cruce → peso/actividad → foto + resumen), sin preguntas
+  médicas en el alta.
+- **Motivo:** el patrón de Fi es el de mayor calidad percibida; la edad aproximada
+  (patrón Amazon) evita el abandono de quien no sabe la fecha; las alergias y
+  condiciones llegan después, con el modelo de procedencia.
+
+## D-009 · Personaje virtual v0 programático (2026-07-13)
+
+- **Decisión:** implementar el personaje como componente Reanimated (criatura-huella
+  con estados) y no bloquear la Etapa 1 esperando ilustración final. Nombre
+  provisional **"Toba"** vía i18n/config remota; candidatos alternativos: Uma, Kiro,
+  Palo. API de estados estable (`MascotState`).
+- **Motivo:** el brief pide no bloquear el lanzamiento y mantener el nombre
+  reemplazable.
+- **Reversión:** sustituir el render interno de `Mascot.tsx` (Lottie/Rive) sin tocar
+  los call sites.
+
+## D-010 · Salida web `single` en lugar de `static` (2026-07-13)
+
+- **Contexto:** el prerender estático de expo-router ejecuta el árbol en Node y
+  AsyncStorage/supabase-js tocan `window` → export roto.
+- **Decisión:** `web.output = "single"` (SPA). GUAU es mobile-first; la web no es un
+  canal de lanzamiento.
+- **Reversión:** reactivar `static` con guardas SSR si algún día la web importa.
+
+## D-011 · Confirmación de correo y usuarios de prueba (2026-07-13)
+
+- **Contexto:** el proyecto Supabase tiene la confirmación de correo activada y el
+  SMTP integrado tiene cuota mínima (~2 correos/hora).
+- **Decisión:** la app soporta ambos modos (si no hay sesión tras el alta muestra
+  "revisa tu correo"); las pruebas e2e crean el usuario por SQL con contraseña
+  bcrypt y lo eliminan al terminar vía `delete-account`.
+- **Pendiente:** configurar SMTP propio antes de la beta (ver launch checklist).
+
+## D-012 · Tests de lógica con Vitest; jest-expo pospuesto (2026-07-13)
+
+- **Decisión:** Vitest cubre `src/core` (dinero, fechas, validación). Los tests de
+  componentes RN llegarán con jest-expo cuando haya UI compleja que lo justifique.
+- **Motivo:** máximo valor de test por complejidad de infraestructura en la Etapa 1;
+  la verificación de UI se hizo con export completo del bundle + e2e de backend.
