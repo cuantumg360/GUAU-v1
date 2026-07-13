@@ -157,6 +157,32 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
 - **Recompensas provisionales** (streak_3/7/14/30 → 1/2/3/5 Huellas) marcadas
   `is_provisional`; cantidades sujetas a análisis de economía.
 
+## D-018 · Recuerdos: soft delete y filtro fuera de la política SELECT (2026-07-13)
+
+- **Contexto:** el e2e de recuerdos reveló que incluir `deleted_at IS NULL` en la
+  política SELECT de `memories` impedía el soft delete: PostgreSQL aplica la política
+  SELECT sobre la fila resultante de un UPDATE, así que fijar `deleted_at` la volvía
+  invisible y el UPDATE se rechazaba ("new row violates RLS").
+- **Decisión:** la política SELECT filtra solo por propiedad (igual que `pets`); el
+  filtro de borrados lógicos vive en las consultas del cliente (`.is('deleted_at', null)`).
+- **Verificado:** crear/versionar conserva el original, versiones inmutables (sin política
+  UPDATE), soft delete oculta el recuerdo. Migración 10.
+
+## D-019 · Recuerdos por voz: grabación real, transcripción manual; STT pospuesto (2026-07-13)
+
+- **Decisión:** la voz se graba con expo-audio y el audio se guarda en bucket privado;
+  la transcripción es editable por el usuario. La transcripción automática (STT) y la
+  "versión organizada por IA" llegarán por la capa de IA (Edge Function), conservando
+  siempre `original_text`/`original_transcript` y el historial `memory_versions`.
+- **Motivo:** STT necesita proveedor de IA en servidor; no bloquear la etapa ni
+  presentar como automático algo que no lo es.
+
+## D-020 · Perfil del perro fuera de la barra de pestañas (2026-07-13)
+
+- **Decisión:** con Recuerdos como pestaña, se movió el perfil del perro a una ruta de
+  stack (`/dog`) accesible desde la tarjeta del perro en Inicio. Tabs: Inicio · Agenda ·
+  Vínculo · Recuerdos · Ajustes (5, límite premium).
+
 ## D-012 · Tests de lógica con Vitest; jest-expo pospuesto (2026-07-13)
 
 - **Decisión:** Vitest cubre `src/core` (dinero, fechas, validación). Los tests de

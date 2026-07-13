@@ -1,4 +1,6 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { ageFromBirthDate } from '@/core/petSchema';
@@ -25,6 +27,7 @@ function greetingKey(hour: number): 'home.greeting_morning' | 'home.greeting_aft
  */
 export default function Home() {
   const { t } = useTranslation();
+  const router = useRouter();
   const { colors } = useTheme();
   const petQuery = usePrimaryPet();
   const photoQuery = usePetPhotoUrl(petQuery.data?.photo_path ?? null);
@@ -57,6 +60,11 @@ export default function Home() {
       </View>
 
       {pet ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('dog.profile_title', { name: pet.name })}
+          onPress={() => router.push('/dog')}
+        >
         <Card>
           <View style={styles.petRow}>
             {photoQuery.data ? (
@@ -82,8 +90,10 @@ export default function Home() {
                 </AppText>
               ) : null}
             </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
           </View>
         </Card>
+        </Pressable>
       ) : null}
 
       {flagsQuery.data?.activities ? <DailyActivityCard /> : null}

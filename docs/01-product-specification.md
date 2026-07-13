@@ -54,7 +54,8 @@ futuras) pero no retrasa lo principal.
 | Privacidad (RLS, storage privado, borrado de cuenta) | ✅ Verificado e2e | migraciones, Edge Function `delete-account` |
 | Calendario + recordatorios + notificaciones | ✅ CRUD, repetición, avisos locales, verificado e2e (Etapa 3) | `(tabs)/agenda.tsx`, `features/reminders/*`, migración 5 |
 | Actividades + actividad diaria + rachas + recompensas | ✅ Contenido, recomendación determinista, racha con protección de reloj, recompensas idempotentes; verificado e2e (Etapas 4+5) | `(tabs)/vinculo.tsx`, `features/activities/*`, migraciones 6–8 |
-| Escáneres / recuerdos | ⛔ Detrás de feature flag; contratos y modelo de datos preparados | docs 07–13, migraciones futuras |
+| Cuaderno de recuerdos (texto + voz + versionado) | ✅ Original conservado, versiones inmutables, grabación real, soft delete; verificado e2e (Etapa 6) | `(tabs)/recuerdos.tsx`, `features/memories/*`, migraciones 9–10 |
+| Escáneres | ⛔ Detrás de feature flag; contratos y modelo de datos preparados; requieren proveedor de IA en servidor | docs 07–08, migraciones futuras |
 
 Ninguna función principal está falseada: las que aún no existen se muestran en la Home
 como "en construcción" gobernadas por flags de servidor, sin botones sin función.

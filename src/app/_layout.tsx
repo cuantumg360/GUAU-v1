@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useTheme, ThemeProvider } from '@/design/ThemeContext';
 import { AuthProvider, useAuth } from '@/features/auth/AuthProvider';
@@ -20,6 +21,7 @@ const queryClient = new QueryClient({
 function RootNavigator() {
   const { ready, session } = useAuth();
   const { colors } = useTheme();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (ready) {
@@ -41,6 +43,19 @@ function RootNavigator() {
       <Stack.Screen name="reminder/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="reminder/[id]" options={{ presentation: 'modal' }} />
       <Stack.Screen name="activity/[id]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="memory/new" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="memory/[id]" options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="dog"
+        options={{
+          headerShown: true,
+          title: '',
+          headerBackTitle: t('common.back'),
+          headerTintColor: colors.primary,
+          headerStyle: { backgroundColor: colors.background },
+          headerShadowVisible: false,
+        }}
+      />
     </Stack>
   );
 }

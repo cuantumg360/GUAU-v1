@@ -28,6 +28,9 @@ export type AnalyticsEvent =
   | 'daily_activity_changed'
   | 'streak_incremented'
   | 'reward_granted'
+  | 'memory_created'
+  | 'memory_version_saved'
+  | 'memory_deleted'
   | 'signout'
   | 'account_delete_requested';
 

@@ -341,6 +341,97 @@ export type Database = {
         }
         Relationships: []
       }
+      memories: {
+        Row: {
+          audio_path: string | null
+          created_at: string
+          deleted_at: string | null
+          experienced_on: string | null
+          id: string
+          input_kind: string
+          original_text: string
+          original_transcript: string | null
+          owner_id: string
+          pet_id: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          audio_path?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          experienced_on?: string | null
+          id?: string
+          input_kind?: string
+          original_text: string
+          original_transcript?: string | null
+          owner_id: string
+          pet_id?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          audio_path?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          experienced_on?: string | null
+          id?: string
+          input_kind?: string
+          original_text?: string
+          original_transcript?: string | null
+          owner_id?: string
+          pet_id?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memories_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memory_versions: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          memory_id: string
+          owner_id: string
+          produced_by: string
+          version: number
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          memory_id: string
+          owner_id: string
+          produced_by?: string
+          version: number
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          memory_id?: string
+          owner_id?: string
+          produced_by?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memory_versions_memory_id_fkey"
+            columns: ["memory_id"]
+            isOneToOne: false
+            referencedRelation: "memories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notification_preferences: {
         Row: {
           daily_activity_enabled: boolean

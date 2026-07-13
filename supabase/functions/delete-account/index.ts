@@ -44,7 +44,7 @@ Deno.serve(async (req: Request) => {
   });
 
   // 2. Archivos del usuario en buckets privados.
-  const buckets = ["pet-photos"];
+  const buckets = ["pet-photos", "memory-audio"];
   for (const bucket of buckets) {
     // Lista recursiva de objetos bajo el prefijo del usuario (carpeta por pet).
     const { data: topLevel } = await admin.storage.from(bucket).list(userId, { limit: 1000 });

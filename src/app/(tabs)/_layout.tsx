@@ -16,6 +16,7 @@ export default function TabsLayout() {
 
   const calendarEnabled = flagsQuery.data?.calendar === true;
   const activitiesEnabled = flagsQuery.data?.activities === true;
+  const memoriesEnabled = flagsQuery.data?.memories === true;
 
   return (
     <Tabs
@@ -38,7 +39,6 @@ export default function TabsLayout() {
         options={{
           title: t('reminders.tab_title'),
           tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" color={color} size={size} />,
-          // La pestaña solo aparece si el feature flag de servidor está activo.
           href: calendarEnabled ? undefined : null,
         }}
       />
@@ -51,10 +51,11 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="dog"
+        name="recuerdos"
         options={{
-          title: t('dog.tab_title'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="heart" color={color} size={size} />,
+          title: t('memories.tab_title'),
+          tabBarIcon: ({ color, size }) => <Ionicons name="book-outline" color={color} size={size} />,
+          href: memoriesEnabled ? undefined : null,
         }}
       />
       <Tabs.Screen
