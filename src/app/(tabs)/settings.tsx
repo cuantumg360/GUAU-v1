@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ export default function Settings() {
   const { t } = useTranslation();
   const router = useRouter();
   const { session, demo } = useAuth();
+  const queryClient = useQueryClient();
   const pawQuery = usePawBalance();
   const flagsQuery = useFeatureFlags();
   const billingEnabled = flagsQuery.data?.paywall === true;
@@ -29,10 +31,12 @@ export default function Settings() {
     track('signout');
     if (demo) {
       await disableDemo();
+      queryClient.clear();
       router.replace('/welcome');
       return;
     }
     await supabase.auth.signOut();
+    queryClient.clear();
     router.replace('/welcome');
   };
 
@@ -90,6 +94,10 @@ export default function Settings() {
         <Row label={t('settings.language')} value={t('settings.language_value')} />
         <Row label={t('settings.version')} value={Constants.expoConfig?.version ?? '0.1.0'} />
       </Card>
+
+      <View style={styles.actions}>
+        <Button label={t('character.open_customize')} variant="secondary" onPress={() => router.push('/mascot')} />
+      </View>
 
       {billingEnabled ? (
         <View style={styles.actions}>

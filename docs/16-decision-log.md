@@ -231,6 +231,37 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
   sesiones a propósito). Verificado: tsc + lint + 63 tests + export web en verde.
 - **Reversión:** eliminar `src/features/demo`, las ramas `if (isDemo())` y el botón.
 
+## D-024 · Rediseño premium + personaje personalizable (2026-07-13)
+
+- **Contexto:** feedback de usuario: la app se sentía vacía/plana, las secciones
+  "divertidas" no lo eran, el onboarding era anodino y faltaba la personalización de la
+  mascota prometida.
+- **Investigación Mobbin:** Tolan y BitePal (personaje grande y central sobre degradados,
+  globos de diálogo, reacciones, celebración), Alan/Notion/Duolingo/Telegram (avatar
+  personalizable con preview + color/accesorio + randomize + nombre).
+- **Decisión / entrega:**
+  - **Mascota "Toba" v2** (`Mascot.tsx`): criatura-huella expresiva (orejas, barriga,
+    ojos que parpadean, mejillas, boca por estado), con color y accesorio configurables
+    y animaciones (respiración, rebote, wiggle) respetando reduce-motion y la regla
+    sanitaria (estados sobrios sin movimiento).
+  - **Personalización real** (`mascotConfig.ts` + `/mascot`): nombre, 6 colores, 6
+    accesorios (collar/pañuelo/gorra/flor/gafas), "Sorpréndeme"; persistida en el
+    dispositivo con pub-sub para actualización en vivo en toda la app. Accesos desde
+    Home (toca la mascota) y Ajustes.
+  - **Componentes premium:** `Gradient` (expo-linear-gradient), `SpeechBubble`,
+    `Confetti`. Héroes con degradado en Home y onboarding.
+  - **Onboarding rediseñado:** barra de progreso, mascota que reacciona por paso con
+    globos de diálogo, y pantalla final de celebración con confeti.
+  - **Home/Vínculo más vivos:** cabecera héroe con mascota + saludo, tarjetas más ricas.
+- **Fix de correctness (verificado visualmente):** al entrar/salir del modo prueba se
+  limpia la caché de React Query (`queryClient.clear()`), porque las queries cacheadas
+  por la ruta Supabase dejaban el gate colgado en el spinner al activar demo.
+- **Verificado:** tsc + lint + 63 tests + export web; y **capturas reales** del flujo
+  (bienvenida, Home, personalización, Vínculo) confirmando el nuevo aspecto.
+- **Nota de honestidad:** la mascota es un personaje programático (formas + Reanimated)
+  de alta expresividad, no una ilustración/Lottie final; la API de estados permite
+  sustituir el render por arte de alta fidelidad sin tocar los call sites.
+
 ## D-012 · Tests de lógica con Vitest; jest-expo pospuesto (2026-07-13)
 
 - **Decisión:** Vitest cubre `src/core` (dinero, fechas, validación). Los tests de

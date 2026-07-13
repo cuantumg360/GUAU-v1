@@ -48,6 +48,7 @@ function RootNavigator() {
       <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />
       <Stack.Screen name="paws" options={{ presentation: 'modal' }} />
       <Stack.Screen name="paw-history" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="mascot" options={{ presentation: 'modal' }} />
       <Stack.Screen
         name="dog"
         options={{

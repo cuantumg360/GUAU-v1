@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -12,9 +13,13 @@ import { enableDemo } from '@/features/demo/store';
 export default function Welcome() {
   const { t } = useTranslation();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const startDemo = async () => {
     await enableDemo();
+    // Limpia la caché para que todas las queries se recarguen por la rama demo
+    // (evita resultados/errores cacheados de la ruta Supabase antes del demo).
+    queryClient.clear();
     router.replace('/');
   };
 

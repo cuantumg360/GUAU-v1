@@ -82,6 +82,15 @@ export const esES = {
     create_cta: 'Crear perfil de {{name}}',
     creating: 'Creando el perfil…',
     step_of: 'Paso {{current}} de {{total}}',
+    speech_name: '¿Cómo se llama tu peludo? ✨',
+    speech_sex: 'Genial. Cuéntame un poco más.',
+    speech_birth: 'La edad me ayuda a recomendaros mejor.',
+    speech_breed: '¿De qué raza o mezcla es?',
+    speech_body: 'Casi está… ¡lo estáis haciendo genial!',
+    speech_photo: '¡Una foto para presumir! 📸',
+    done_title: '¡{{name}} ya está en GUAU! 🎉',
+    done_body: 'Encantado de conoceros. Vamos a cuidar y disfrutar cada día juntos.',
+    done_cta: 'Empezar',
   },
   reminders: {
     tab_title: 'Agenda',
@@ -390,12 +399,23 @@ export const esES = {
     pawCustom: 'Recarga personalizada',
   },
   character: {
-    // Nombre provisional del personaje; configurable desde servidor
-    // (app_config: character.name). Ver docs/11-virtual-character.md.
+    // Nombre provisional del personaje; personalizable por el usuario.
     default_name: 'Toba',
-    onboarding_hello: 'Guau… ¡hola! Estoy aquí para ayudarte a cuidar de tu perro.',
-    onboarding_during: 'Te iré guiando. Esto será rápido.',
-    home_idle: 'Cuando quieras, seguimos conociendo a {{name}}.',
+    onboarding_hello: 'Guau… ¡hola! Soy {{mascot}}, tu compañero en GUAU.',
+    onboarding_during: 'Te iré guiando. Esto será rápido, ¡prometido!',
+    home_idle: 'Cuando quieras, seguimos cuidando de {{name}}.',
+    // Pantalla de personalización
+    customize_title: 'Tu compañero',
+    customize_subtitle: 'Dale a {{mascot}} tu toque. Puedes cambiarlo cuando quieras.',
+    section_name: 'Nombre',
+    name_placeholder: 'Ponle un nombre',
+    section_color: 'Color',
+    section_accessory: 'Accesorio',
+    randomize: 'Sorpréndeme',
+    save: 'Guardar compañero',
+    saved: '¡Listo! {{mascot}} tiene nuevo look.',
+    open_customize: 'Personalizar mi compañero',
+    intro_line: '¡Hola! Soy {{mascot}}. ¿Me das un aire nuevo?',
   },
 } as const;
 

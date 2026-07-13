@@ -6,12 +6,15 @@ import { useTranslation } from 'react-i18next';
 import { ageFromBirthDate } from '@/core/petSchema';
 import { AppText } from '@/design/components/AppText';
 import { Card } from '@/design/components/Card';
+import { Gradient } from '@/design/components/Gradient';
 import { Screen } from '@/design/components/Screen';
 import { useTheme } from '@/design/ThemeContext';
 import { radius, spacing } from '@/design/tokens';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { DailyActivityCard } from '@/features/activities/DailyActivityCard';
 import { Mascot } from '@/features/character/Mascot';
+import { useMascotConfig } from '@/features/character/mascotConfig';
+import { SpeechBubble } from '@/features/character/SpeechBubble';
 import { usePetPhotoUrl, usePrimaryPet } from '@/features/pets/api';
 import { useFeatureFlags, usePawBalance } from '@/lib/remoteConfig';
 
@@ -35,9 +38,11 @@ export default function Home() {
   const photoQuery = usePetPhotoUrl(petQuery.data?.photo_path ?? null);
   const flagsQuery = useFeatureFlags();
   const pawQuery = usePawBalance();
+  const mascot = useMascotConfig();
 
   const pet = petQuery.data;
   const age = pet?.birth_date ? ageFromBirthDate(pet.birth_date) : null;
+  const greeting = t(greetingKey(new Date().getHours()));
 
   const upcoming: { flag: string; label: string }[] = [
     { flag: 'calendar', label: t('home.feature_calendar') },
@@ -56,15 +61,25 @@ export default function Home() {
           <AppText variant="caption" tone="secondary">{t('home.demo_pill')}</AppText>
         </View>
       ) : null}
-      <View style={styles.headerRow}>
-        <View style={styles.greeting}>
-          <AppText variant="display">{t(greetingKey(new Date().getHours()))}</AppText>
-          {pet ? (
-            <AppText tone="secondary">{t('home.with_dog', { name: pet.name })}</AppText>
-          ) : null}
+
+      <Gradient rounded style={styles.hero}>
+        <AppText variant="display">{greeting}</AppText>
+        {pet ? <AppText tone="secondary">{t('home.with_dog', { name: pet.name })}</AppText> : null}
+        <View style={styles.heroMascotRow}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('character.open_customize')}
+            onPress={() => router.push('/mascot')}
+          >
+            <Mascot state="happy" size={84} />
+          </Pressable>
+          <View style={styles.heroBubble}>
+            <SpeechBubble
+              text={pet ? t('character.home_idle', { name: pet.name }) : t('character.onboarding_hello', { mascot: mascot.name })}
+            />
+          </View>
         </View>
-        <Mascot state="neutral" size={64} />
-      </View>
+      </Gradient>
 
       {pet ? (
         <Pressable
@@ -127,6 +142,9 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   demoPill: { alignSelf: 'flex-start', borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 4 },
+  hero: { padding: spacing.lg, gap: spacing.xxs },
+  heroMascotRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
+  heroBubble: { flex: 1 },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   greeting: { flex: 1, gap: spacing.xxs },
   petRow: { flexDirection: 'row', gap: spacing.md, alignItems: 'center' },

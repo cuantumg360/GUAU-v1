@@ -12,6 +12,7 @@ import { TextField } from '@/design/components/TextField';
 import { useTheme } from '@/design/ThemeContext';
 import { spacing } from '@/design/tokens';
 import { useActivities, useCompleteDailyActivity, type Activity } from '@/features/activities/api';
+import { Confetti } from '@/features/character/Confetti';
 import { Mascot } from '@/features/character/Mascot';
 import { track } from '@/lib/analytics';
 
@@ -57,6 +58,7 @@ function ActivityLoaded({ activity }: { activity: Activity }) {
   if (phase === 'done') {
     return (
       <Screen scroll={false}>
+        <Confetti />
         <View style={styles.celebrate}>
           <Mascot state="celebrating" size={140} />
           <AppText variant="display" style={styles.center}>{t('activities.already_done')}</AppText>

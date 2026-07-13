@@ -14,12 +14,16 @@ import {
 import { AppText } from '@/design/components/AppText';
 import { Button } from '@/design/components/Button';
 import { Card } from '@/design/components/Card';
+import { Gradient } from '@/design/components/Gradient';
 import { OptionChip } from '@/design/components/OptionChip';
 import { Screen } from '@/design/components/Screen';
 import { TextField } from '@/design/components/TextField';
 import { useTheme } from '@/design/ThemeContext';
 import { radius, spacing } from '@/design/tokens';
+import { Confetti } from '@/features/character/Confetti';
 import { Mascot, type MascotState } from '@/features/character/Mascot';
+import { useMascotConfig } from '@/features/character/mascotConfig';
+import { SpeechBubble } from '@/features/character/SpeechBubble';
 import { useCreatePet, useUploadPetPhoto } from '@/features/pets/api';
 import { track } from '@/lib/analytics';
 
@@ -32,7 +36,9 @@ export default function Onboarding() {
   const router = useRouter();
   const createPet = useCreatePet();
   const uploadPhoto = useUploadPetPhoto();
+  const mascot = useMascotConfig();
 
+  const [celebrating, setCelebrating] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
   const [name, setName] = useState('');
   const [sex, setSex] = useState<PetInput['sex']>('unknown');
@@ -127,7 +133,7 @@ export default function Onboarding() {
         }
       }
       track('onboarding_completed');
-      router.replace('/(tabs)');
+      setCelebrating(true);
     } catch {
       setStepError(t('common.error_generic'));
     }
@@ -136,24 +142,54 @@ export default function Onboarding() {
   const mascotState: MascotState = step === 'intro' ? 'happy' : 'attentive';
   const busy = createPet.isPending || uploadPhoto.isPending;
 
+  // Frase del personaje por paso (le da personalidad y guía).
+  const speech: Record<Step, string> = {
+    intro: t('character.onboarding_hello', { mascot: mascot.name }),
+    name: t('onboarding.speech_name'),
+    sex: t('onboarding.speech_sex'),
+    birth: t('onboarding.speech_birth'),
+    breed: t('onboarding.speech_breed'),
+    body: t('onboarding.speech_body'),
+    photo: t('onboarding.speech_photo'),
+  };
+  const progress = stepIndex / (STEPS.length - 1);
+
+  // Pantalla de celebración al terminar el alta.
+  if (celebrating) {
+    return (
+      <Screen scroll={false}>
+        <Confetti />
+        <View style={styles.celebrate}>
+          <Mascot state="celebrating" size={150} />
+          <AppText variant="display" style={styles.center}>
+            {t('onboarding.done_title', { name: name.trim() })}
+          </AppText>
+          <AppText tone="secondary" style={styles.center}>{t('onboarding.done_body')}</AppText>
+        </View>
+        <Button label={t('onboarding.done_cta')} onPress={() => router.replace('/(tabs)')} />
+      </Screen>
+    );
+  }
+
   return (
     <Screen>
-      <View style={styles.header}>
-        <Mascot state={mascotState} size={72} />
-        {stepIndex > 0 ? (
-          <AppText variant="caption" tone="secondary">
-            {t('onboarding.step_of', { current: stepIndex, total: STEPS.length - 1 })}
-          </AppText>
-        ) : null}
-      </View>
+      {/* Héroe: progreso + personaje + globo de diálogo */}
+      <Gradient rounded style={styles.hero}>
+        <View style={[styles.progressTrack, { backgroundColor: colors.surface }]}>
+          <View style={[styles.progressFill, { backgroundColor: colors.primary, width: `${Math.max(8, progress * 100)}%` }]} />
+        </View>
+        <View style={styles.heroRow}>
+          <Mascot state={mascotState} size={72} />
+          <View style={styles.heroBubble}>
+            <SpeechBubble text={speech[step]} />
+          </View>
+        </View>
+      </Gradient>
 
       {step === 'intro' ? (
         <View style={styles.block}>
           <AppText variant="display">{t('onboarding.intro_title')}</AppText>
           <AppText tone="secondary">{t('onboarding.intro_body')}</AppText>
-          <AppText variant="caption" tone="secondary">
-            {t('character.onboarding_hello')}
-          </AppText>
         </View>
       ) : null}
 
@@ -297,11 +333,17 @@ export default function Onboarding() {
 }
 
 const styles = StyleSheet.create({
-  header: { alignItems: 'center', gap: spacing.xs },
+  hero: { padding: spacing.md, gap: spacing.sm },
+  progressTrack: { height: 8, borderRadius: 4, overflow: 'hidden' },
+  progressFill: { height: 8, borderRadius: 4 },
+  heroRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  heroBubble: { flex: 1 },
   block: { gap: spacing.md },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs },
   yearChips: { marginVertical: spacing.xs },
   subQuestion: { marginTop: spacing.sm },
   photo: { width: 160, height: 160, borderRadius: radius.lg, borderWidth: 1, alignSelf: 'center' },
   footer: { marginTop: spacing.lg, gap: spacing.xs },
+  celebrate: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md },
+  center: { textAlign: 'center' },
 });
