@@ -7,10 +7,16 @@ import { Button } from '@/design/components/Button';
 import { Screen } from '@/design/components/Screen';
 import { spacing } from '@/design/tokens';
 import { Mascot } from '@/features/character/Mascot';
+import { enableDemo } from '@/features/demo/store';
 
 export default function Welcome() {
   const { t } = useTranslation();
   const router = useRouter();
+
+  const startDemo = async () => {
+    await enableDemo();
+    router.replace('/');
+  };
 
   return (
     <Screen scroll={false}>
@@ -26,6 +32,10 @@ export default function Welcome() {
       <View style={styles.actions}>
         <Button label={t('auth.create_account')} onPress={() => router.push('/sign-up')} />
         <Button label={t('auth.have_account')} variant="ghost" onPress={() => router.push('/sign-in')} />
+        <Button label={t('auth.try_demo')} variant="secondary" onPress={() => void startDemo()} />
+        <AppText variant="caption" tone="secondary" style={styles.title}>
+          {t('auth.try_demo_hint')}
+        </AppText>
       </View>
     </Screen>
   );

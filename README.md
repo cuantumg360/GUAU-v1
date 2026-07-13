@@ -33,6 +33,15 @@ npm run lint        # expo lint
 npm run test        # Vitest (lógica pura de src/core)
 ```
 
+### Modo prueba (explorar sin cuenta ni backend)
+
+En la pantalla de bienvenida pulsa **"Probar sin cuenta"**. Entra en un modo de
+demostración con datos de ejemplo (perro, recordatorios, actividades, racha,
+recuerdos, Huellas) que **vive solo en el dispositivo**: no crea cuenta, no envía
+ni guarda nada en Supabase, y funciona aunque el backend esté pausado. Cada
+arranque parte de datos limpios. Para salir: Ajustes → "Salir del modo prueba".
+Ideal para recorrer toda la app rápidamente (por ejemplo, en web con `w`).
+
 ## Arquitectura (resumen)
 
 ```

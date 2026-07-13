@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { demoStore, isDemo } from '@/features/demo/store';
 import { supabase } from '@/lib/supabase';
 
 /**
@@ -13,6 +14,7 @@ export function useFeatureFlags() {
     queryKey: ['feature_flags'],
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
+      if (isDemo()) return demoStore.featureFlags();
       const { data, error } = await supabase.from('feature_flags').select('key, enabled, description');
       if (error) throw error;
       return Object.fromEntries(data.map((f) => [f.key, f.enabled])) as Record<string, boolean>;
@@ -36,6 +38,7 @@ export function usePawBalance() {
   return useQuery({
     queryKey: ['paw_balance'],
     queryFn: async () => {
+      if (isDemo()) return demoStore.pawBalance();
       const { data, error } = await supabase.from('paw_accounts').select('balance').maybeSingle();
       if (error) throw error;
       return data?.balance ?? 0;

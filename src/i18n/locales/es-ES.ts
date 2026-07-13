@@ -22,6 +22,8 @@ export const esES = {
       'Salud visible, comida, cartilla, citas, actividades juntos y recuerdos. Todo en un mismo sitio.',
     create_account: 'Crear cuenta',
     have_account: 'Ya tengo cuenta',
+    try_demo: 'Probar sin cuenta',
+    try_demo_hint: 'Modo prueba: explora toda la app con datos de ejemplo. No se guarda nada.',
     email_label: 'Correo electrónico',
     email_placeholder: 'tucorreo@ejemplo.com',
     password_label: 'Contraseña',
@@ -302,6 +304,7 @@ export const esES = {
     open_plans: 'Ver GUAU Pro',
   },
   home: {
+    demo_pill: '🐾 Modo prueba · datos de ejemplo',
     greeting_morning: 'Buenos días',
     greeting_afternoon: 'Buenas tardes',
     greeting_evening: 'Buenas noches',
@@ -364,6 +367,12 @@ export const esES = {
     privacy_note:
       'Tus datos y las fotos de tu perro se guardan cifrados en tránsito y en almacenamiento privado europeo. Nunca se usan para entrenar modelos sin tu consentimiento explícito.',
     signout: 'Cerrar sesión',
+    demo_title: 'Estás en modo prueba',
+    demo_body:
+      'Todo lo que ves son datos de ejemplo guardados solo en este dispositivo. Nada se envía ni se guarda en el servidor. Al salir se borra todo.',
+    demo_account: 'Cuenta de prueba',
+    demo_exit: 'Salir del modo prueba',
+    demo_restart_onboarding: 'Rehacer el alta del perro',
     delete_account: 'Eliminar cuenta y datos',
     delete_confirm_title: '¿Eliminar tu cuenta?',
     delete_confirm_body:

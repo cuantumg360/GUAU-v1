@@ -9,6 +9,7 @@ import { Card } from '@/design/components/Card';
 import { Screen } from '@/design/components/Screen';
 import { useTheme } from '@/design/ThemeContext';
 import { radius, spacing } from '@/design/tokens';
+import { useAuth } from '@/features/auth/AuthProvider';
 import { DailyActivityCard } from '@/features/activities/DailyActivityCard';
 import { Mascot } from '@/features/character/Mascot';
 import { usePetPhotoUrl, usePrimaryPet } from '@/features/pets/api';
@@ -28,6 +29,7 @@ function greetingKey(hour: number): 'home.greeting_morning' | 'home.greeting_aft
 export default function Home() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { demo } = useAuth();
   const { colors } = useTheme();
   const petQuery = usePrimaryPet();
   const photoQuery = usePetPhotoUrl(petQuery.data?.photo_path ?? null);
@@ -49,6 +51,11 @@ export default function Home() {
 
   return (
     <Screen>
+      {demo ? (
+        <View style={[styles.demoPill, { backgroundColor: colors.accentSoft, borderColor: colors.accent }]}>
+          <AppText variant="caption" tone="secondary">{t('home.demo_pill')}</AppText>
+        </View>
+      ) : null}
       <View style={styles.headerRow}>
         <View style={styles.greeting}>
           <AppText variant="display">{t(greetingKey(new Date().getHours()))}</AppText>
@@ -119,6 +126,7 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  demoPill: { alignSelf: 'flex-start', borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 4 },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   greeting: { flex: 1, gap: spacing.xxs },
   petRow: { flexDirection: 'row', gap: spacing.md, alignItems: 'center' },

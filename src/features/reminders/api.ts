@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { advance, type RepeatRule } from '@/core/recurrence';
 import { reminderInputSchema, type ReminderInput } from '@/core/reminderSchema';
+import { demoStore, isDemo } from '@/features/demo/store';
 import { track } from '@/lib/analytics';
 import type { Tables } from '@/lib/database.types';
 import { supabase } from '@/lib/supabase';
@@ -19,6 +20,7 @@ export function useReminders() {
   return useQuery({
     queryKey: LIST_KEY,
     queryFn: async (): Promise<Reminder[]> => {
+      if (isDemo()) return demoStore.reminders();
       const { data, error } = await supabase
         .from('reminders')
         .select('*')
@@ -35,6 +37,11 @@ export function useCreateReminder() {
   return useMutation({
     mutationFn: async (input: ReminderInput): Promise<Reminder> => {
       const parsed = reminderInputSchema.parse(input);
+      if (isDemo()) {
+        const row = demoStore.addReminder({ ...parsed, source: 'manual' });
+        track('reminder_created', { category: row.category, repeats: row.repeat_frequency !== 'none' });
+        return row;
+      }
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData.user) throw userError ?? new Error('not_authenticated');
 
@@ -58,6 +65,10 @@ export function useUpdateReminder() {
   return useMutation({
     mutationFn: async ({ id, input }: { id: string; input: ReminderInput }): Promise<Reminder> => {
       const parsed = reminderInputSchema.parse(input);
+      if (isDemo()) {
+        track('reminder_updated');
+        return demoStore.updateReminder(id, parsed);
+      }
       const { data, error } = await supabase
         .from('reminders')
         .update(parsed)
@@ -82,6 +93,11 @@ export function useCompleteReminder() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (reminder: Reminder): Promise<void> => {
+      if (isDemo()) {
+        demoStore.setReminderStatus(reminder.id, 'completed', { completed_at: new Date().toISOString() });
+        track('reminder_completed', { category: reminder.category });
+        return;
+      }
       const { error } = await supabase
         .from('reminders')
         .update({ status: 'completed', completed_at: new Date().toISOString() })
@@ -132,6 +148,11 @@ export function useSnoozeReminder() {
   return useMutation({
     mutationFn: async ({ reminder, minutes }: { reminder: Reminder; minutes: number }): Promise<void> => {
       const until = new Date(Date.now() + minutes * 60_000).toISOString();
+      if (isDemo()) {
+        demoStore.setReminderStatus(reminder.id, 'snoozed', { snoozed_until: until });
+        track('reminder_snoozed', { minutes });
+        return;
+      }
       const { data, error } = await supabase
         .from('reminders')
         .update({ status: 'snoozed', snoozed_until: until })
@@ -150,6 +171,11 @@ export function useDeleteReminder() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (reminder: Reminder): Promise<void> => {
+      if (isDemo()) {
+        demoStore.setReminderStatus(reminder.id, 'cancelled');
+        track('reminder_deleted');
+        return;
+      }
       // Cancelación lógica: preserva historial. RLS permite el update al dueño.
       const { error } = await supabase
         .from('reminders')

@@ -10,6 +10,7 @@ import { Card } from '@/design/components/Card';
 import { Screen } from '@/design/components/Screen';
 import { spacing } from '@/design/tokens';
 import { useAuth } from '@/features/auth/AuthProvider';
+import { disableDemo } from '@/features/demo/store';
 import { track } from '@/lib/analytics';
 import { useFeatureFlags, usePawBalance } from '@/lib/remoteConfig';
 import { supabase } from '@/lib/supabase';
@@ -17,7 +18,7 @@ import { supabase } from '@/lib/supabase';
 export default function Settings() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { session } = useAuth();
+  const { session, demo } = useAuth();
   const pawQuery = usePawBalance();
   const flagsQuery = useFeatureFlags();
   const billingEnabled = flagsQuery.data?.paywall === true;
@@ -26,8 +27,20 @@ export default function Settings() {
 
   const signOut = async () => {
     track('signout');
+    if (demo) {
+      await disableDemo();
+      router.replace('/welcome');
+      return;
+    }
     await supabase.auth.signOut();
     router.replace('/welcome');
+  };
+
+  const exitDemoAndRestart = async () => {
+    // Reinicia el onboarding en modo prueba (borra el perro de ejemplo).
+    const { demoStore } = await import('@/features/demo/store');
+    demoStore.resetOnboarding();
+    router.replace('/');
   };
 
   const confirmDelete = () => {
@@ -59,9 +72,17 @@ export default function Settings() {
     <Screen>
       <AppText variant="display">{t('settings.tab_title')}</AppText>
 
+      {demo ? (
+        <Card style={styles.demoBanner}>
+          <AppText variant="heading" tone="primary">{t('settings.demo_title')}</AppText>
+          <AppText variant="caption" tone="secondary">{t('settings.demo_body')}</AppText>
+          <Button label={t('settings.demo_restart_onboarding')} variant="secondary" onPress={() => void exitDemoAndRestart()} />
+        </Card>
+      ) : null}
+
       <Card>
         <AppText variant="heading">{t('settings.account_section')}</AppText>
-        <Row label={t('settings.email')} value={session?.user.email ?? '—'} />
+        <Row label={t('settings.email')} value={demo ? t('settings.demo_account') : session?.user.email ?? '—'} />
         <Row label={t('settings.plan')} value={t('settings.plan_free')} />
         {typeof pawQuery.data === 'number' ? (
           <Row label={t('settings.paws')} value={String(pawQuery.data)} />
@@ -87,14 +108,18 @@ export default function Settings() {
       </Card>
 
       <View style={styles.actions}>
-        <Button label={t('settings.signout')} variant="secondary" onPress={() => void signOut()} />
-        <Button
-          label={t('settings.delete_account')}
-          variant="danger"
-          loading={deleting}
-          onPress={confirmDelete}
-        />
-        {deleteError ? <AppText tone="danger">{deleteError}</AppText> : null}
+        <Button label={demo ? t('settings.demo_exit') : t('settings.signout')} variant="secondary" onPress={() => void signOut()} />
+        {!demo ? (
+          <>
+            <Button
+              label={t('settings.delete_account')}
+              variant="danger"
+              loading={deleting}
+              onPress={confirmDelete}
+            />
+            {deleteError ? <AppText tone="danger">{deleteError}</AppText> : null}
+          </>
+        ) : null}
       </View>
     </Screen>
   );
@@ -115,4 +140,5 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: spacing.md, paddingVertical: 4 },
   rowValue: { flexShrink: 1, textAlign: 'right' },
   actions: { gap: spacing.xs, marginTop: spacing.md },
+  demoBanner: { gap: spacing.xs },
 });

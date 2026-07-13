@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { petInputSchema, type PetInput } from '@/core/petSchema';
+import { demoStore, isDemo } from '@/features/demo/store';
 import { track } from '@/lib/analytics';
 import type { Tables } from '@/lib/database.types';
 import { supabase } from '@/lib/supabase';
@@ -13,6 +14,7 @@ export function usePrimaryPet() {
   return useQuery({
     queryKey: PRIMARY_PET_KEY,
     queryFn: async (): Promise<Pet | null> => {
+      if (isDemo()) return demoStore.getPrimaryPet();
       const { data, error } = await supabase
         .from('pets')
         .select('*')
@@ -31,6 +33,10 @@ export function useCreatePet() {
   return useMutation({
     mutationFn: async (input: PetInput): Promise<Pet> => {
       const parsed = petInputSchema.parse(input);
+      if (isDemo()) {
+        track('pet_created', { approx_birth: parsed.birth_date_is_approx });
+        return demoStore.createPet(parsed);
+      }
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData.user) throw userError ?? new Error('not_authenticated');
 
@@ -59,6 +65,10 @@ export function useUpdatePet() {
   return useMutation({
     mutationFn: async ({ id, input }: { id: string; input: PetInput }): Promise<Pet> => {
       const parsed = petInputSchema.parse(input);
+      if (isDemo()) {
+        track('pet_updated');
+        return demoStore.updatePet(parsed);
+      }
       const { data, error } = await supabase.from('pets').update(parsed).eq('id', id).select().single();
       if (error) throw error;
       track('pet_updated');
@@ -76,6 +86,10 @@ export function useUploadPetPhoto() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ petId, localUri }: { petId: string; localUri: string }): Promise<Pet> => {
+      if (isDemo()) {
+        track('pet_photo_added');
+        return demoStore.setPetPhoto(localUri);
+      }
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData.user) throw userError ?? new Error('not_authenticated');
 
@@ -110,6 +124,8 @@ export function usePetPhotoUrl(photoPath: string | null) {
     staleTime: 30 * 60 * 1000,
     queryFn: async () => {
       if (!photoPath) return null;
+      // En modo prueba, photo_path es un uri local: se usa tal cual.
+      if (isDemo()) return photoPath;
       const { data, error } = await supabase.storage
         .from('pet-photos')
         .createSignedUrl(photoPath, 60 * 60);

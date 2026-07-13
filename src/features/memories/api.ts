@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { demoStore, isDemo } from '@/features/demo/store';
 import { track } from '@/lib/analytics';
 import type { Tables } from '@/lib/database.types';
 import { supabase } from '@/lib/supabase';
@@ -13,6 +14,7 @@ export function useMemories() {
   return useQuery({
     queryKey: LIST_KEY,
     queryFn: async (): Promise<Memory[]> => {
+      if (isDemo()) return demoStore.memories();
       const { data, error } = await supabase
         .from('memories')
         .select('*')
@@ -30,6 +32,7 @@ export function useMemory(id: string | undefined) {
     queryKey: ['memory', id],
     enabled: Boolean(id),
     queryFn: async () => {
+      if (isDemo()) return demoStore.memory(id!);
       const { data: memory, error } = await supabase.from('memories').select('*').eq('id', id!).maybeSingle();
       if (error) throw error;
       const { data: versions, error: vErr } = await supabase
@@ -58,6 +61,10 @@ export function useCreateMemory() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: CreateInput): Promise<Memory> => {
+      if (isDemo()) {
+        track('memory_created', { kind: input.inputKind });
+        return demoStore.addMemory(input);
+      }
       const { data: userData, error: userError } = await supabase.auth.getUser();
       if (userError || !userData.user) throw userError ?? new Error('not_authenticated');
       const userId = userData.user.id;
@@ -112,6 +119,11 @@ export function useSaveMemoryVersion() {
       content: string;
       producedBy?: 'manual' | 'ai';
     }): Promise<MemoryVersion> => {
+      if (isDemo()) {
+        const row = demoStore.addMemoryVersion(memoryId, content);
+        track('memory_version_saved', { version: row.version, by: producedBy });
+        return row;
+      }
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error('not_authenticated');
 
@@ -144,6 +156,11 @@ export function useDeleteMemory() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (memory: Memory): Promise<void> => {
+      if (isDemo()) {
+        demoStore.deleteMemory(memory.id);
+        track('memory_deleted');
+        return;
+      }
       // Soft delete; el audio se elimina físicamente si existe.
       const { error } = await supabase
         .from('memories')
@@ -166,6 +183,7 @@ export function useMemoryAudioUrl(audioPath: string | null) {
     staleTime: 30 * 60 * 1000,
     queryFn: async () => {
       if (!audioPath) return null;
+      if (isDemo()) return audioPath; // uri local en modo prueba
       const { data, error } = await supabase.storage.from('memory-audio').createSignedUrl(audioPath, 60 * 60);
       if (error) throw error;
       return data.signedUrl;

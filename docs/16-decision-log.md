@@ -214,6 +214,23 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
 - **Verificado:** `tsc` + `expo lint` + 63 tests + export web, todo verde en SDK 54.
 - **Reversión:** `npm i expo@~57 && npx expo install --fix`.
 
+## D-023 · Modo prueba con almacén en memoria (2026-07-13)
+
+- **Contexto:** necesidad de recorrer toda la app sin crear cuenta ni guardar datos
+  reales (y sin depender de que el proyecto Supabase esté activo).
+- **Decisión:** un flag `isDemo` (persistido en AsyncStorage) y un almacén en memoria
+  (`src/features/demo/store.ts`) con datos semilla. Cada `api.ts` de feature y
+  `lib/remoteConfig.ts` ramifican `if (isDemo())` para operar contra el almacén en vez
+  de Supabase. El `AuthProvider` provee una sesión sintética de demo y reacciona a
+  activar/salir vía una pequeña suscripción (`subscribeDemo`). Botón "Probar sin cuenta"
+  en la bienvenida; salida y aviso en Ajustes; píldora "Modo prueba" en Inicio.
+- **Garantías:** en demo no se llama a Supabase para datos de usuario; `track()` no
+  escribe (no hay sesión real); las notificaciones/subidas se omiten. El código de
+  producción (Supabase, RLS, funciones) queda intacto: es solo una ruta alternativa.
+- **Limitación:** los datos de demo se reinician en cada arranque (no persisten entre
+  sesiones a propósito). Verificado: tsc + lint + 63 tests + export web en verde.
+- **Reversión:** eliminar `src/features/demo`, las ramas `if (isDemo())` y el botón.
+
 ## D-012 · Tests de lógica con Vitest; jest-expo pospuesto (2026-07-13)
 
 - **Decisión:** Vitest cubre `src/core` (dinero, fechas, validación). Los tests de

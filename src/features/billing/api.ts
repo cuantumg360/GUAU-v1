@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
+import { demoStore, isDemo } from '@/features/demo/store';
 import type { Tables } from '@/lib/database.types';
 import { supabase } from '@/lib/supabase';
 
@@ -13,6 +14,7 @@ export function useProducts() {
     queryKey: ['products'],
     staleTime: 10 * 60 * 1000,
     queryFn: async (): Promise<Product[]> => {
+      if (isDemo()) return demoStore.products();
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -29,6 +31,7 @@ export function useEntitlement() {
   return useQuery({
     queryKey: ['entitlement'],
     queryFn: async (): Promise<Entitlement | null> => {
+      if (isDemo()) return demoStore.entitlement();
       const { data, error } = await supabase.from('entitlements').select('*').maybeSingle();
       if (error) throw error;
       return data;
@@ -41,6 +44,7 @@ export function usePawLedger() {
   return useQuery({
     queryKey: ['paw_ledger'],
     queryFn: async (): Promise<PawTransaction[]> => {
+      if (isDemo()) return demoStore.ledger();
       const { data, error } = await supabase
         .from('paw_ledger')
         .select('*')
@@ -58,6 +62,7 @@ export function useTopupConfig() {
     queryKey: ['topup_config'],
     staleTime: 10 * 60 * 1000,
     queryFn: async () => {
+      if (isDemo()) return { min: 5, max: 500, unitPriceCents: 100 };
       const { data, error } = await supabase
         .from('app_config')
         .select('key, value')

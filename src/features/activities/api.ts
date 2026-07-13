@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { dayKey } from '@/core/datetime';
 import { pickDailyActivity, type ActivityCandidate } from '@/core/recommendation';
+import { demoStore, isDemo } from '@/features/demo/store';
 import { track } from '@/lib/analytics';
 import type { Tables } from '@/lib/database.types';
 import { supabase } from '@/lib/supabase';
@@ -17,6 +18,7 @@ export function useActivities() {
     queryKey: ['activities'],
     staleTime: 10 * 60 * 1000,
     queryFn: async (): Promise<Activity[]> => {
+      if (isDemo()) return demoStore.activities();
       const { data, error } = await supabase.from('activities').select('*').order('created_at');
       if (error) throw error;
       return data;
@@ -28,6 +30,7 @@ export function useStreak() {
   return useQuery({
     queryKey: ['streak'],
     queryFn: async (): Promise<Streak | null> => {
+      if (isDemo()) return demoStore.streak();
       const { data, error } = await supabase.from('streaks').select('*').maybeSingle();
       if (error) throw error;
       return data;
@@ -40,6 +43,7 @@ export function useTodayCompletion() {
   return useQuery({
     queryKey: ['today_completion'],
     queryFn: async (): Promise<boolean> => {
+      if (isDemo()) return demoStore.todayCompleted();
       const today = dayKey(new Date().toISOString(), DEFAULT_TZ);
       const { data, error } = await supabase
         .from('activity_completions')
@@ -62,6 +66,7 @@ export function useDailyRecommendation(petActivityLevel: string | undefined) {
     queryKey: ['daily_recommendation', petActivityLevel],
     enabled: activitiesQuery.data !== undefined,
     queryFn: async (): Promise<Activity | null> => {
+      if (isDemo()) return demoStore.dailyActivity();
       const activities = activitiesQuery.data ?? [];
       if (activities.length === 0) return null;
       const today = dayKey(new Date().toISOString(), DEFAULT_TZ);
@@ -129,6 +134,12 @@ export function useCompleteDailyActivity() {
       activityId: string;
       dogResponse?: string;
     }): Promise<Streak> => {
+      if (isDemo()) {
+        const streak = demoStore.completeDaily();
+        track('daily_activity_completed', { streak: streak.current_count });
+        track('streak_incremented', { current: streak.current_count, best: streak.best_count });
+        return streak;
+      }
       const { data, error } = await supabase.rpc('complete_daily_activity', {
         p_activity_id: activityId,
         p_dog_response: dogResponse ?? undefined,
@@ -154,6 +165,11 @@ export function useChangeDailyActivity() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ currentId, activities }: { currentId: string; activities: Activity[] }): Promise<Activity | null> => {
+      if (isDemo()) {
+        const next = demoStore.changeDaily();
+        track('daily_activity_changed', { activity: next.slug });
+        return next;
+      }
       const today = dayKey(new Date().toISOString(), DEFAULT_TZ);
       const alternatives = activities.filter((a) => a.id !== currentId);
       if (alternatives.length === 0) return null;
@@ -176,6 +192,7 @@ export function useRewardGrants() {
   return useQuery({
     queryKey: ['reward_grants'],
     queryFn: async () => {
+      if (isDemo()) return demoStore.rewardGrants();
       const { data, error } = await supabase
         .from('reward_grants')
         .select('id, reward_id, status, granted_at, reward_definitions(title_key, reward_type, amount)')
