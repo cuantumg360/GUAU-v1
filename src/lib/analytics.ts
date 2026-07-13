@@ -17,6 +17,11 @@ export type AnalyticsEvent =
   | 'pet_created'
   | 'pet_updated'
   | 'pet_photo_added'
+  | 'reminder_created'
+  | 'reminder_updated'
+  | 'reminder_completed'
+  | 'reminder_snoozed'
+  | 'reminder_deleted'
   | 'signout'
   | 'account_delete_requested';
 

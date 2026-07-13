@@ -2,12 +2,19 @@
 
 ## Implementado en esta entrega
 
-### Unit tests (Vitest) — 27 tests, 2 archivos, todos verdes
+### Unit tests (Vitest) — 55 tests, 5 archivos, todos verdes
 - `src/core/pricing.test.ts`: cifras contractuales del brief — Pro anual ahorra
   73,45 €, ≈13,83 €/mes, 30,7 %; packs con 30 % exacto; recarga personalizada (mín 5,
   entero, sin descuento, máx); formato de moneda es-ES.
 - `src/core/petSchema.test.ts`: fechas es-ES (válidas/imposibles/futuras/formato),
   edad aproximada ↔ edad calculada, peso con coma/punto y rangos, esquema Zod del perro.
+- `src/core/recurrence.test.ts`: repeticiones (diaria/semanal/mensual/anual + intervalo),
+  próxima ocurrencia, expansión en rango, antelaciones de aviso, y **zonas horarias**
+  (salto CET/CEST de Madrid: 9:00 de pared → 07:00 UTC en verano, 08:00 en invierno).
+- `src/core/reminderSchema.test.ts`: validación Zod del recordatorio y normalización de
+  antelaciones.
+- `src/core/datetime.test.ts`: parseo/format DD/MM/AAAA + HH:MM ↔ instante UTC (ida y
+  vuelta, distinta zona).
 
 ### Verificación e2e de backend (script contra el proyecto real) — 13/13
 Login; trigger crea `profiles` + `paw_accounts` a 0; **RLS** (insert propio OK, ajeno
@@ -27,7 +34,8 @@ genera el bundle completo (compila de extremo a extremo).
 | 1 | Registro | ✅ implementado + e2e (login/alta) |
 | 2 | Creación de perro | ✅ implementado + validación testeada |
 | 3–5 | Escáneres físico/comida/cartilla | ⛔ Etapas 7–9 (contrato + coste ya testeado) |
-| 6–7 | Recordatorio + notificación | ⛔ Etapa 3 |
+| 6 | Recordatorio (crear/editar/completar/posponer) | ✅ implementado + e2e (RLS, sin coste Huellas) |
+| 7 | Notificación (aviso local programado) | ✅ local implementada; push remota en hardening |
 | 8 | Actividad diaria | ⛔ Etapa 4 |
 | 9 | Incremento de racha | ⛔ Etapa 5 |
 | 10 | Concesión de recompensa sin duplicados | 🟡 `credit_paws` idempotente ya verificado |

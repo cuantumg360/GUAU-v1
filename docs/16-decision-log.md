@@ -106,6 +106,33 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
   bcrypt y lo eliminan al terminar vía `delete-account`.
 - **Pendiente:** configurar SMTP propio antes de la beta (ver launch checklist).
 
+## D-013 · Unificar CalendarEvent y Reminder en `reminders` (2026-07-13)
+
+- **Contexto:** el brief lista CalendarEvent y Reminder como entidades separadas.
+- **Decisión:** una sola tabla `reminders`. En GUAU todo elemento del calendario es
+  accionable/notificable (cita, vacuna, paseo, medicación…), así que separarlos
+  duplicaría lógica sin aportar valor. El campo `source` (manual|booklet) distingue los
+  importados de la cartilla; `category` cubre los 12 tipos del brief.
+- **Reversión:** si en el futuro hacen falta eventos no accionables, se añade una vista
+  o una columna `kind`.
+
+## D-014 · Notificaciones locales primero; push remotas en hardening (2026-07-13)
+
+- **Decisión:** programar avisos con notificaciones **locales** de expo-notifications
+  (funcionan sin backend de push). Se agenda la próxima ocurrencia con sus antelaciones;
+  al completar un recurrente se crea la siguiente instancia.
+- **Motivo:** las push remotas (Expo Push) requieren credenciales de proyecto EAS aún
+  inexistentes. Las locales dan valor real ya y no bloquean la etapa.
+- **Reversión:** añadir Expo Push + `push_token` (ya hay columna) en hardening.
+
+## D-015 · Recurrencia y zonas horarias en UTC (2026-07-13)
+
+- **Decisión:** el motor de recurrencia (`src/core/recurrence.ts`) opera sobre instantes
+  absolutos (UTC); la hora "de pared" se convierte con el desfase real de la zona (incl.
+  horario de verano) vía Intl al crear/mostrar. `due_at` es timestamptz.
+- **Motivo:** evita dobles avisos y días perdidos en cambios de DST. Verificado con tests
+  del salto CET/CEST de Madrid.
+
 ## D-012 · Tests de lógica con Vitest; jest-expo pospuesto (2026-07-13)
 
 - **Decisión:** Vitest cubre `src/core` (dinero, fechas, validación). Los tests de

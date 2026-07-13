@@ -4,13 +4,17 @@ import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/design/ThemeContext';
 import { useAuth } from '@/features/auth/AuthProvider';
+import { useFeatureFlags } from '@/lib/remoteConfig';
 
 export default function TabsLayout() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { session, ready } = useAuth();
+  const flagsQuery = useFeatureFlags();
 
   if (ready && !session) return <Redirect href="/welcome" />;
+
+  const calendarEnabled = flagsQuery.data?.calendar === true;
 
   return (
     <Tabs
@@ -26,6 +30,15 @@ export default function TabsLayout() {
         options={{
           title: 'GUAU',
           tabBarIcon: ({ color, size }) => <Ionicons name="paw" color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="agenda"
+        options={{
+          title: t('reminders.tab_title'),
+          tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" color={color} size={size} />,
+          // La pestaña solo aparece si el feature flag de servidor está activo.
+          href: calendarEnabled ? undefined : null,
         }}
       />
       <Tabs.Screen

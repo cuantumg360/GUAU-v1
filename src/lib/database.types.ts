@@ -182,6 +182,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          daily_activity_enabled: boolean
+          push_token: string | null
+          quiet_hours_end: number | null
+          quiet_hours_start: number | null
+          reminders_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          daily_activity_enabled?: boolean
+          push_token?: string | null
+          quiet_hours_end?: number | null
+          quiet_hours_start?: number | null
+          reminders_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          daily_activity_enabled?: boolean
+          push_token?: string | null
+          quiet_hours_end?: number | null
+          quiet_hours_start?: number | null
+          reminders_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       operation_costs: {
         Row: {
           active: boolean
@@ -460,6 +490,86 @@ export type Database = {
         }
         Relationships: []
       }
+      reminders: {
+        Row: {
+          all_day: boolean
+          category: Database["public"]["Enums"]["reminder_category"]
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          due_at: string
+          id: string
+          lead_minutes: number[]
+          notes: string | null
+          owner_id: string
+          pet_id: string | null
+          priority: Database["public"]["Enums"]["reminder_priority"]
+          related_health_field_id: string | null
+          repeat_frequency: string
+          repeat_interval: number
+          snoozed_until: string | null
+          source: Database["public"]["Enums"]["reminder_source"]
+          status: Database["public"]["Enums"]["reminder_status"]
+          timezone: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          all_day?: boolean
+          category?: Database["public"]["Enums"]["reminder_category"]
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_at: string
+          id?: string
+          lead_minutes?: number[]
+          notes?: string | null
+          owner_id: string
+          pet_id?: string | null
+          priority?: Database["public"]["Enums"]["reminder_priority"]
+          related_health_field_id?: string | null
+          repeat_frequency?: string
+          repeat_interval?: number
+          snoozed_until?: string | null
+          source?: Database["public"]["Enums"]["reminder_source"]
+          status?: Database["public"]["Enums"]["reminder_status"]
+          timezone?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          all_day?: boolean
+          category?: Database["public"]["Enums"]["reminder_category"]
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          due_at?: string
+          id?: string
+          lead_minutes?: number[]
+          notes?: string | null
+          owner_id?: string
+          pet_id?: string | null
+          priority?: Database["public"]["Enums"]["reminder_priority"]
+          related_health_field_id?: string | null
+          repeat_frequency?: string
+          repeat_interval?: number
+          snoozed_until?: string | null
+          source?: Database["public"]["Enums"]["reminder_source"]
+          status?: Database["public"]["Enums"]["reminder_status"]
+          timezone?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reminders_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -542,6 +652,22 @@ export type Database = {
       paw_tx_status: "completed" | "reversed"
       pet_sex: "male" | "female" | "unknown"
       plan_kind: "free" | "pro_monthly" | "pro_annual"
+      reminder_category:
+        | "vet_appointment"
+        | "vaccine"
+        | "deworming"
+        | "medication"
+        | "food_purchase"
+        | "grooming"
+        | "bath"
+        | "training"
+        | "activity"
+        | "trip"
+        | "walk"
+        | "custom"
+      reminder_priority: "low" | "normal" | "high"
+      reminder_source: "manual" | "booklet"
+      reminder_status: "pending" | "completed" | "snoozed" | "cancelled"
       reproductive_status: "intact" | "neutered" | "unknown"
     }
     CompositeTypes: {
@@ -684,6 +810,23 @@ export const Constants = {
       paw_tx_status: ["completed", "reversed"],
       pet_sex: ["male", "female", "unknown"],
       plan_kind: ["free", "pro_monthly", "pro_annual"],
+      reminder_category: [
+        "vet_appointment",
+        "vaccine",
+        "deworming",
+        "medication",
+        "food_purchase",
+        "grooming",
+        "bath",
+        "training",
+        "activity",
+        "trip",
+        "walk",
+        "custom",
+      ],
+      reminder_priority: ["low", "normal", "high"],
+      reminder_source: ["manual", "booklet"],
+      reminder_status: ["pending", "completed", "snoozed", "cancelled"],
       reproductive_status: ["intact", "neutered", "unknown"],
     },
   },

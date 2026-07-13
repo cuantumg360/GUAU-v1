@@ -52,7 +52,8 @@ futuras) pero no retrasa lo principal.
 | Feature flags y config remota | ✅ Legibles, gobiernan la Home | migración 1, `remoteConfig.ts` |
 | Analítica | ✅ Taxonomía + emisión con RLS | `analytics.ts`, migración 3 |
 | Privacidad (RLS, storage privado, borrado de cuenta) | ✅ Verificado e2e | migraciones, Edge Function `delete-account` |
-| Escáneres / calendario / actividades / rachas / recuerdos | ⛔ Detrás de feature flag; contratos y modelo de datos preparados | docs 07–13, migraciones futuras |
+| Calendario + recordatorios + notificaciones | ✅ CRUD, repetición, avisos locales, verificado e2e (Etapa 3) | `(tabs)/agenda.tsx`, `features/reminders/*`, migración 5 |
+| Escáneres / actividades / rachas / recuerdos | ⛔ Detrás de feature flag; contratos y modelo de datos preparados | docs 07–13, migraciones futuras |
 
 Ninguna función principal está falseada: las que aún no existen se muestran en la Home
 como "en construcción" gobernadas por flags de servidor, sin botones sin función.

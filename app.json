@@ -41,6 +41,12 @@
         {
           "photosPermission": "GUAU necesita acceso a tus fotos para elegir la imagen de perfil de tu perro."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#C2512F"
+        }
       ]
     ],
     "experiments": {

@@ -37,7 +37,10 @@ function RootNavigator() {
         contentStyle: { backgroundColor: colors.background },
         animation: 'fade_from_bottom',
       }}
-    />
+    >
+      <Stack.Screen name="reminder/new" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="reminder/[id]" options={{ presentation: 'modal' }} />
+    </Stack>
   );
 }
 

@@ -36,6 +36,17 @@ tabla de cliente, idempotencia en la economía, campos de auditoría.
 - Funciones: `spend_paws` (atómica, idempotente, autenticado), `credit_paws`
   (service_role), `validate_custom_topup` (mín/máx/entero, service_role).
 
+### Calendario y recordatorios (Etapa 3)
+- **reminders** (unifica CalendarEvent y Reminder; ver D-013): `owner_id, pet_id?,
+  title, description, category(12 tipos), due_at(timestamptz), timezone, all_day,
+  repeat_frequency, repeat_interval, lead_minutes[], priority, notes, source(manual|
+  booklet), related_health_field_id?, status(pending|completed|snoozed|cancelled),
+  completed_at, snoozed_until`. RLS: dueño; el cliente solo inserta `source='manual'`
+  (los de cartilla los inserta el servidor tras confirmación, Etapa 7). **No consume
+  Huellas.**
+- **notification_preferences**: `reminders_enabled, daily_activity_enabled,
+  quiet_hours_start/end, push_token`. RLS: dueño.
+
 ### Plataforma
 - **app_config**, **feature_flags** (lectura autenticada), **analytics_events**
   (insert propio, sin datos sanitarios), **audit_log** (solo service_role).
