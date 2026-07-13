@@ -13,7 +13,7 @@ personaje virtual que acompaña. Salud tratada siempre con prudencia y seriedad.
 
 ## Stack
 
-Expo SDK 57 · React Native 0.86 · TypeScript estricto · expo-router · Supabase
+Expo SDK 54 · React Native 0.81 · TypeScript estricto · expo-router · Supabase
 (Postgres 17, Auth, Storage privado, Edge Functions, RLS) · TanStack Query · Zod ·
 i18next (es-ES) · Vitest.
 

@@ -37,8 +37,9 @@ Se restauró el 2026-07-13. Registrado en `16-decision-log.md` (D-002).
 
 ## 3. Stack elegido (repo vacío → stack por defecto del brief)
 
-- **App móvil:** React Native 0.86 + **Expo SDK 57** + TypeScript estricto + expo-router
-  (navegación tipada por archivos, `typedRoutes` activado).
+- **App móvil:** React Native 0.81 + **Expo SDK 54** + TypeScript estricto + expo-router
+  (navegación por archivos). Nota: el scaffold inicial usó SDK 57; se fijó a SDK 54 por
+  requisito del proyecto (ver decision log D-022).
 - **Backend:** **Supabase** (PostgreSQL 17 + Auth + Storage + Edge Functions + RLS).
   Cumple: autenticación segura, almacenamiento privado de archivos, funciones de
   servidor para lógica sensible, Postgres gestionado.

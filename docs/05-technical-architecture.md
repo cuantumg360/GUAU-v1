@@ -2,7 +2,7 @@
 
 ## Stack
 
-- **Cliente:** Expo SDK 57, React Native 0.86, TypeScript estricto, expo-router.
+- **Cliente:** Expo SDK 54, React Native 0.81, TypeScript estricto, expo-router.
 - **Servidor:** Supabase (Postgres 17, Auth, Storage privado, Edge Functions Deno, RLS).
 - **Estado de servidor:** TanStack Query. **Validación:** Zod. **i18n:** i18next +
   react-i18next (es-ES). **Tests:** Vitest.

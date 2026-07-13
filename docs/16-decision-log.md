@@ -8,7 +8,7 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
 ## D-001 · Stack por defecto (2026-07-13)
 
 - **Contexto:** repositorio vacío, sin arquitectura previa aprovechable.
-- **Decisión:** Expo SDK 57 + React Native 0.86 + TypeScript estricto + expo-router;
+- **Decisión (actualizada por D-022):** Expo SDK 54 + React Native 0.81 + TypeScript estricto + expo-router;
   backend Supabase (Postgres 17, Auth, Storage, Edge Functions); TanStack Query; Zod;
   i18next; Vitest para lógica pura.
 - **Motivo:** es exactamente la arquitectura por defecto que fija el brief (móvil
@@ -198,6 +198,21 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
   cliente no puede concederse Pro (RLS 42501) ni cambiar precios; `validate_custom_topup`
   es solo-servidor (el cliente recibe permission denied — posición deseada) y la
   prevalidación de recarga en cliente está cubierta por unit tests.
+
+## D-022 · Fijar el stack a Expo SDK 54 (2026-07-13)
+
+- **Contexto:** el scaffold inicial (`create-expo-app@latest`) trajo Expo SDK 57
+  (RN 0.86, React 19.2). Requisito del proyecto: usar **SDK 54**.
+- **Decisión:** downgrade completo a Expo SDK 54 → React Native 0.81.5, React 19.1.0,
+  Reanimated 4.1, react-native-worklets 0.5.1, expo-router 6, TypeScript 5.9. Alineado
+  con `npx expo install --fix` (fuente de verdad de versiones compatibles).
+- **Limpieza asociada:** se eliminaron paquetes de plantilla no usados
+  (`@expo/ui`, `expo-glass-effect`, `expo-symbols`, `expo-web-browser`, `expo-font`,
+  `expo-system-ui`, `expo-status-bar`); el único de plantilla que se conserva es
+  `expo-device` (usado en notificaciones). `vitest.config.ts` pasó a resolver el alias
+  `@` con `path` en lugar de `URL` (choque de tipos DOM/Node en TS 5.9).
+- **Verificado:** `tsc` + `expo lint` + 63 tests + export web, todo verde en SDK 54.
+- **Reversión:** `npm i expo@~57 && npx expo install --fix`.
 
 ## D-012 · Tests de lógica con Vitest; jest-expo pospuesto (2026-07-13)
 
