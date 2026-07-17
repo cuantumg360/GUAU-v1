@@ -12,8 +12,6 @@ import { TextField } from '@/design/components/TextField';
 import { useTheme } from '@/design/ThemeContext';
 import { spacing } from '@/design/tokens';
 import { useActivities, useCompleteDailyActivity, type Activity } from '@/features/activities/api';
-import { Confetti } from '@/features/character/Confetti';
-import { Mascot } from '@/features/character/Mascot';
 import { track } from '@/lib/analytics';
 
 export default function ActivityDetail() {
@@ -38,7 +36,7 @@ function ActivityLoaded({ activity }: { activity: Activity }) {
   const { colors } = useTheme();
   const router = useRouter();
   const complete = useCompleteDailyActivity();
-  const [phase, setPhase] = useState<'read' | 'respond' | 'done'>('read');
+  const [phase, setPhase] = useState<'read' | 'respond'>('read');
   const [response, setResponse] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -49,25 +47,13 @@ function ActivityLoaded({ activity }: { activity: Activity }) {
     setError(null);
     try {
       await complete.mutateAsync({ activityId: activity.id, dogResponse: response.trim() || undefined });
-      setPhase('done');
+      // La celebración vive en la pantalla de racha (referencia del fundador,
+      // docs/01-founder-references.md): número grande + semana + próximo hito.
+      router.replace('/streak?celebrate=1');
     } catch {
       setError(t('common.error_generic'));
     }
   };
-
-  if (phase === 'done') {
-    return (
-      <Screen scroll={false}>
-        <Confetti />
-        <View style={styles.celebrate}>
-          <Mascot state="celebrating" size={140} />
-          <AppText variant="display" style={styles.center}>{t('activities.already_done')}</AppText>
-          <AppText tone="secondary" style={styles.center}>{t('streak.motivate_keep')}</AppText>
-        </View>
-        <Button label={t('common.continue')} onPress={() => router.back()} />
-      </Screen>
-    );
-  }
 
   if (phase === 'respond') {
     return (
@@ -196,6 +182,4 @@ const styles = StyleSheet.create({
   listRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm },
   stepNum: { width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   flex: { flex: 1 },
-  celebrate: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.md },
-  center: { textAlign: 'center' },
 });

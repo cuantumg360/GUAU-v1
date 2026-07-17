@@ -5,6 +5,12 @@ pantallas reales; a continuación, patrones observados y su traducción a GUAU. 
 copia** composición, ilustración, iconografía ni identidad de ninguna app: Mobbin se usa
 como fuente de patrones y estándares.
 
+> Las referencias entregadas directamente por el fundador (Prioridad 1) se registran y
+> analizan en `docs/01-founder-references.md`; este documento recoge la investigación
+> propia (Prioridad 3). El lote 1 del fundador (Duolingo: mapa de caminos, celebración
+> de racha, cartera en cabecera) dio origen a la pestaña Caminos, la pantalla de racha
+> y los chips de cabecera de Inicio.
+
 ## Flujos y pantallas analizados
 
 | App | Flujo/pantalla | Enlace |

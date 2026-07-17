@@ -43,6 +43,8 @@ function RootNavigator() {
       <Stack.Screen name="reminder/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="reminder/[id]" options={{ presentation: 'modal' }} />
       <Stack.Screen name="activity/[id]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="path/[id]" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="streak" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
       <Stack.Screen name="memory/new" options={{ presentation: 'modal' }} />
       <Stack.Screen name="memory/[id]" options={{ presentation: 'modal' }} />
       <Stack.Screen name="paywall" options={{ presentation: 'modal' }} />

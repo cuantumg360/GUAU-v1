@@ -268,3 +268,35 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
   componentes RN llegarán con jest-expo cuando haya UI compleja que lo justifique.
 - **Motivo:** máximo valor de test por complejidad de infraestructura en la Etapa 1;
   la verificación de UI se hizo con export completo del bundle + e2e de backend.
+
+## D-025 · Caminos, racha inmersiva y cabecera con estado (referencias del fundador, lote 1) (2026-07-17)
+
+- **Contexto:** el fundador entregó tres pantallas de Duolingo vía Mobbin (mapa de
+  progreso, celebración de racha, camino con cartera en cabecera). Análisis completo
+  en `docs/01-founder-references.md`; hipótesis: señalan el lenguaje de progresión,
+  no la identidad visual.
+- **Decisión / entrega:**
+  - **Pestaña Caminos** (antes listado "Vínculo"): mapa serpenteante por mundo con
+    nodos-almohadilla por fase, pisadas como conectores, separadores de camino y
+    **hueso final con la recompensa visible por adelantado** (`PathMap.tsx`). Toba
+    espera junto al siguiente nodo. Selector horizontal de los 6 mundos con identidad
+    cromática propia (nuevo tinte ciruela en tokens para Bienestar).
+  - **Catálogo local de caminos** (`pathsData.ts`): 6 mundos × 4 caminos × 4 fases
+    (Descubrir → Practicar → Jugar → Consolidar) con títulos del prompt maestro;
+    recompensas = insignias (sin Huellas hasta que el ledger real las abone en Fase 2;
+    nada aleatorio). Progreso local en AsyncStorage (`progress.ts`), común a demo y
+    cuenta real durante la Fase 1.
+  - **Detalle de camino** (`/path/[id]`): Toba presenta cada fase, plantilla guiada de
+    3 pasos por fase, aviso de parada, nota "¿cómo respondió tu perro?" al consolidar
+    y celebración con la insignia al completar. Caminos posteriores se abren al
+    completar el anterior; el primero de cada mundo está siempre abierto.
+  - **Pantalla de racha** (`/streak`): celebración a pantalla completa terracota
+    (escena fija en ambos temas) tras la actividad diaria: número grande, semana
+    L–D con huellas, mejor racha y **próximo hito con recompensa anunciada**. Sin
+    "compartir por recompensa"; con racha 0, «Empezamos cuando estés preparado».
+  - **Cabecera de Inicio:** chips discretos de racha y Huellas (máx. dos indicadores;
+    Huellas fuera de pestañas, como exige el prompt maestro).
+- **No copiado deliberadamente:** botones 3D, estrellas por nodo, cofres/loot,
+  saltar contenido, share incentivado, paletas y personajes de Duolingo.
+- **Verificado:** tsc + eslint + 63 tests. Fase 1: sin backend nuevo; eventos
+  `path_opened / path_phase_completed / path_completed` añadidos a la taxonomía.

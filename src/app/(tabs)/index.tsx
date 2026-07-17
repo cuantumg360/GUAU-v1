@@ -12,6 +12,7 @@ import { useTheme } from '@/design/ThemeContext';
 import { radius, spacing } from '@/design/tokens';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { DailyActivityCard } from '@/features/activities/DailyActivityCard';
+import { useStreak } from '@/features/activities/api';
 import { Mascot } from '@/features/character/Mascot';
 import { useMascotConfig } from '@/features/character/mascotConfig';
 import { SpeechBubble } from '@/features/character/SpeechBubble';
@@ -38,6 +39,7 @@ export default function Home() {
   const photoQuery = usePetPhotoUrl(petQuery.data?.photo_path ?? null);
   const flagsQuery = useFeatureFlags();
   const pawQuery = usePawBalance();
+  const streakQuery = useStreak();
   const mascot = useMascotConfig();
 
   const pet = petQuery.data;
@@ -61,6 +63,32 @@ export default function Home() {
           <AppText variant="caption" tone="secondary">{t('home.demo_pill')}</AppText>
         </View>
       ) : null}
+
+      {/* Racha y Huellas en cabecera, de forma discreta (no ocupan pestaña). */}
+      <View style={styles.statRow}>
+        {flagsQuery.data?.activities ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('home.open_streak')}
+            onPress={() => router.push('/streak')}
+            style={[styles.statChip, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          >
+            <Ionicons name="flame" size={15} color={colors.primary} />
+            <AppText variant="label">{streakQuery.data?.current_count ?? 0}</AppText>
+          </Pressable>
+        ) : null}
+        {typeof pawQuery.data === 'number' ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={t('home.open_paws')}
+            onPress={() => router.push('/paws')}
+            style={[styles.statChip, { backgroundColor: colors.surface, borderColor: colors.border }]}
+          >
+            <Ionicons name="paw" size={15} color={colors.accent} />
+            <AppText variant="label">{pawQuery.data}</AppText>
+          </Pressable>
+        ) : null}
+      </View>
 
       <Gradient rounded style={styles.hero}>
         <AppText variant="display">{greeting}</AppText>
@@ -106,11 +134,6 @@ export default function Home() {
                   {pet.birth_date_is_approx ? ' (aprox.)' : ''}
                 </AppText>
               ) : null}
-              {typeof pawQuery.data === 'number' ? (
-                <AppText variant="label" tone="primary">
-                  {pawQuery.data} {t('home.paw_balance')}
-                </AppText>
-              ) : null}
             </View>
             <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
           </View>
@@ -142,6 +165,8 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   demoPill: { alignSelf: 'flex-start', borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 4 },
+  statRow: { flexDirection: 'row', justifyContent: 'flex-end', gap: spacing.xs },
+  statChip: { flexDirection: 'row', alignItems: 'center', gap: 4, borderWidth: 1, borderRadius: radius.pill, paddingHorizontal: spacing.sm, paddingVertical: 6 },
   hero: { padding: spacing.lg, gap: spacing.xxs },
   heroMascotRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginTop: spacing.sm },
   heroBubble: { flex: 1 },

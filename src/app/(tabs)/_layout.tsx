@@ -45,8 +45,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="vinculo"
         options={{
-          title: t('activities.tab_title'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="flame-outline" color={color} size={size} />,
+          title: t('paths.tab_title'),
+          tabBarIcon: ({ color, size }) => <Ionicons name="footsteps-outline" color={color} size={size} />,
           href: activitiesEnabled ? undefined : null,
         }}
       />
