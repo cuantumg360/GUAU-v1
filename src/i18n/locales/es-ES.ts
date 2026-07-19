@@ -566,6 +566,17 @@ export const esES = {
     saved: '¡Listo! {{mascot}} tiene nuevo look.',
     open_customize: 'Personalizar mi compañero',
     intro_line: '¡Hola! Soy {{mascot}}. ¿Me das un aire nuevo?',
+    // Menú contextual del personaje interactivo
+    open_menu: 'Hablar con {{mascot}}',
+    menu_close: 'Cerrar',
+    menu_speech_activity: '¿Un ratito con {{name}}? Hay una actividad esperándoos.',
+    menu_speech_done: '¡Lo de hoy ya está! Lleváis {{count}} días seguidos.',
+    menu_speech_hello: 'Aquí estoy. ¿Qué os apetece hacer?',
+    menu_start_activity: 'Empezar la actividad de hoy',
+    menu_next_reminder: 'Próximo: {{title}} · {{when}}',
+    menu_new_memory: 'Guardar un recuerdo',
+    menu_view_streak: 'Ver vuestra racha',
+    menu_customize: 'Personalizar a {{mascot}}',
   },
 } as const;
 

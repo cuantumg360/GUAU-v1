@@ -30,6 +30,8 @@ export type AnalyticsEvent =
   | 'path_opened'
   | 'path_phase_completed'
   | 'path_completed'
+  | 'companion_opened'
+  | 'companion_action'
   | 'reward_granted'
   | 'memory_created'
   | 'memory_version_saved'

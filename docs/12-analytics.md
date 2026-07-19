@@ -32,7 +32,9 @@ Actividades diarias completadas, continuación de rachas, recordatorios completa
 recuerdos creados, escáneres repetidos, sesiones semanales (Etapas 3–6). Caminos:
 `path_opened` (detalle de camino visto), `path_phase_completed` (fase marcada, con
 `path` y `phase`), `path_completed` (camino terminado, con `world`); en Fase 1 se
-emiten con progreso local, en Fase 2 acompañarán al estado en servidor.
+emiten con progreso local, en Fase 2 acompañarán al estado en servidor. Personaje:
+`companion_opened` (origen: home/agenda/paths_map/memories/fab) y `companion_action`
+(acción elegida en el menú contextual de Toba).
 
 ### Monetización
 Paywall visto, plan seleccionado, compra iniciada/completada/fallida, renovación,

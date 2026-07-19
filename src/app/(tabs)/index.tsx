@@ -1,5 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -13,10 +15,12 @@ import { radius, spacing } from '@/design/tokens';
 import { useAuth } from '@/features/auth/AuthProvider';
 import { DailyActivityCard } from '@/features/activities/DailyActivityCard';
 import { useStreak } from '@/features/activities/api';
+import { CompanionOverlay } from '@/features/character/CompanionMenu';
 import { Mascot } from '@/features/character/Mascot';
 import { useMascotConfig } from '@/features/character/mascotConfig';
 import { SpeechBubble } from '@/features/character/SpeechBubble';
 import { usePetPhotoUrl, usePrimaryPet } from '@/features/pets/api';
+import { track } from '@/lib/analytics';
 import { useFeatureFlags, usePawBalance } from '@/lib/remoteConfig';
 
 function greetingKey(hour: number): 'home.greeting_morning' | 'home.greeting_afternoon' | 'home.greeting_evening' {
@@ -45,6 +49,13 @@ export default function Home() {
   const pet = petQuery.data;
   const age = pet?.birth_date ? ageFromBirthDate(pet.birth_date) : null;
   const greeting = t(greetingKey(new Date().getHours()));
+  const [companionOpen, setCompanionOpen] = useState(false);
+
+  const openCompanion = () => {
+    void Haptics.selectionAsync();
+    track('companion_opened', { from: 'home' });
+    setCompanionOpen(true);
+  };
 
   const upcoming: { flag: string; label: string }[] = [
     { flag: 'calendar', label: t('home.feature_calendar') },
@@ -94,10 +105,12 @@ export default function Home() {
         <AppText variant="display">{greeting}</AppText>
         {pet ? <AppText tone="secondary">{t('home.with_dog', { name: pet.name })}</AppText> : null}
         <View style={styles.heroMascotRow}>
+          {/* Tocar a Toba abre su menú contextual (no una sección aparte). */}
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel={t('character.open_customize')}
-            onPress={() => router.push('/mascot')}
+            accessibilityLabel={t('character.open_menu', { mascot: mascot.name })}
+            onPress={openCompanion}
+            style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.94 : 1 }] }]}
           >
             <Mascot state="happy" size={84} />
           </Pressable>
@@ -108,6 +121,8 @@ export default function Home() {
           </View>
         </View>
       </Gradient>
+
+      <CompanionOverlay visible={companionOpen} onClose={() => setCompanionOpen(false)} />
 
       {pet ? (
         <Pressable

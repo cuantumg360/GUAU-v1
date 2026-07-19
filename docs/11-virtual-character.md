@@ -24,6 +24,17 @@ personalización y conversación futura.
 además curioso/concentrado/aviso/serio: se mapearán a variantes de estos al ampliar el
 set de animaciones.)
 
+## Interacción (implementado)
+
+Toba es interactivo, no una sección: tocar al personaje (héroe de Inicio, Toba
+del mapa de Caminos, cabecera de Recuerdos o el flotante de Agenda) abre su
+**menú contextual** (`CompanionMenu.tsx`): Toba reacciona, saluda con una línea
+según el momento y ofrece UNA prioridad principal + máximo tres accesos rápidos,
+todos reales: actividad de hoy pendiente, próximo recordatorio, guardar un
+recuerdo, ver la racha o personalizarlo. Nunca muestra diez prioridades a la
+vez, no bloquea la navegación y se cierra tocando fuera. Eventos:
+`companion_opened` (con origen) y `companion_action`.
+
 ## Funciones iniciales (según se activen las etapas)
 
 Aparecer en onboarding (implementado), guiar escáneres, indicar encuadre/luz, acompañar

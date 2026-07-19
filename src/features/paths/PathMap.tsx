@@ -18,6 +18,7 @@ import { AppText } from '@/design/components/AppText';
 import { useTheme } from '@/design/ThemeContext';
 import { motion, radius, spacing } from '@/design/tokens';
 import { Mascot } from '@/features/character/Mascot';
+import { useMascotConfig } from '@/features/character/mascotConfig';
 import {
   PHASE_ICONS,
   PHASE_ORDER,
@@ -71,12 +72,15 @@ function buildItems(world: WorldId, progress: PathsProgress | undefined): MapIte
 type Props = {
   world: WorldId;
   progress: PathsProgress | undefined;
+  /** Tocar a Toba en el mapa abre su menú contextual (personaje interactivo). */
+  onMascotPress?: () => void;
 };
 
-export function PathMap({ world, progress }: Props) {
+export function PathMap({ world, progress, onMascotPress }: Props) {
   const { t } = useTranslation();
   const { colors, isDark } = useTheme();
   const router = useRouter();
+  const mascot = useMascotConfig();
   const [width, setWidth] = useState(0);
 
   const tint = worldTint(world, isDark);
@@ -185,9 +189,15 @@ export function PathMap({ world, progress }: Props) {
 
       {/* Toba espera junto al siguiente paso (no se queda quieto en cada nivel). */}
       {width > 0 && activeRow >= 0 ? (
-        <View
-          pointerEvents="none"
-          style={{
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('character.open_menu', { mascot: mascot.name })}
+          disabled={!onMascotPress}
+          onPress={() => {
+            void Haptics.selectionAsync();
+            onMascotPress?.();
+          }}
+          style={({ pressed }) => ({
             position: 'absolute',
             top: yOf(activeRow) - 40,
             // Al lado contrario del nodo; si el nodo cae centrado, a su derecha.
@@ -198,10 +208,11 @@ export function PathMap({ world, progress }: Props) {
               ),
               width - 76,
             ),
-          }}
+            transform: [{ scale: pressed ? 0.94 : 1 }],
+          })}
         >
           <Mascot state="attentive" size={68} />
-        </View>
+        </Pressable>
       ) : null}
     </View>
   );

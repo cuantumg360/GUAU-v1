@@ -1,5 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
@@ -10,13 +12,18 @@ import { Card } from '@/design/components/Card';
 import { Screen } from '@/design/components/Screen';
 import { useTheme } from '@/design/ThemeContext';
 import { radius, spacing } from '@/design/tokens';
+import { CompanionOverlay } from '@/features/character/CompanionMenu';
 import { Mascot } from '@/features/character/Mascot';
+import { useMascotConfig } from '@/features/character/mascotConfig';
 import { useMemories, type Memory } from '@/features/memories/api';
+import { track } from '@/lib/analytics';
 
 export default function Recuerdos() {
   const { t } = useTranslation();
   const router = useRouter();
   const memoriesQuery = useMemories();
+  const mascot = useMascotConfig();
+  const [companionOpen, setCompanionOpen] = useState(false);
   const memories = memoriesQuery.data ?? [];
   const empty = !memoriesQuery.isPending && memories.length === 0;
 
@@ -27,8 +34,22 @@ export default function Recuerdos() {
           <AppText variant="display">{t('memories.title')}</AppText>
           <AppText tone="secondary">{t('memories.subtitle')}</AppText>
         </View>
-        <Mascot state="neutral" size={60} />
+        {/* Toba interactivo: tocar abre su menú contextual. */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={t('character.open_menu', { mascot: mascot.name })}
+          onPress={() => {
+            void Haptics.selectionAsync();
+            track('companion_opened', { from: 'memories' });
+            setCompanionOpen(true);
+          }}
+          style={({ pressed }) => [{ transform: [{ scale: pressed ? 0.94 : 1 }] }]}
+        >
+          <Mascot state="neutral" size={60} />
+        </Pressable>
       </View>
+
+      <CompanionOverlay visible={companionOpen} onClose={() => setCompanionOpen(false)} />
 
       <View style={styles.addRow}>
         <Button label={t('memories.add_text')} style={styles.flex} onPress={() => router.push('/memory/new?kind=text')} />

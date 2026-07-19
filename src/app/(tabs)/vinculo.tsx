@@ -11,9 +11,11 @@ import { useTheme } from '@/design/ThemeContext';
 import { minTouchTarget, radius, spacing } from '@/design/tokens';
 import { DailyActivityCard } from '@/features/activities/DailyActivityCard';
 import { useStreak } from '@/features/activities/api';
+import { CompanionOverlay } from '@/features/character/CompanionMenu';
 import { PathMap } from '@/features/paths/PathMap';
 import { WORLDS, worldTint, type WorldId } from '@/features/paths/pathsData';
 import { usePathsProgress, worldCompleted } from '@/features/paths/progress';
+import { track } from '@/lib/analytics';
 
 /**
  * Pestaña Caminos: el mapa de progresión de GUAU (docs/01-founder-references.md).
@@ -30,6 +32,7 @@ export default function Caminos() {
 
   const progress = progressQuery.data;
   const [selected, setSelected] = useState<WorldId | null>(null);
+  const [companionOpen, setCompanionOpen] = useState(false);
   const firstIncomplete =
     WORLDS.find((w) => worldCompleted(progress, w.id) < 4)?.id ?? WORLDS[0].id;
   const world = selected ?? firstIncomplete;
@@ -118,7 +121,16 @@ export default function Caminos() {
         </View>
       </View>
 
-      <PathMap world={world} progress={progress} />
+      <PathMap
+        world={world}
+        progress={progress}
+        onMascotPress={() => {
+          track('companion_opened', { from: 'paths_map' });
+          setCompanionOpen(true);
+        }}
+      />
+
+      <CompanionOverlay visible={companionOpen} onClose={() => setCompanionOpen(false)} />
 
       {/* Actividad diaria: transversal, también dentro del camino activo. */}
       <DailyActivityCard />

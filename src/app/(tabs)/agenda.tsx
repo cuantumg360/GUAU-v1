@@ -11,6 +11,7 @@ import { Card } from '@/design/components/Card';
 import { Screen } from '@/design/components/Screen';
 import { useTheme } from '@/design/ThemeContext';
 import { radius, spacing } from '@/design/tokens';
+import { CompanionFab } from '@/features/character/CompanionMenu';
 import { categoryMeta } from '@/features/reminders/categoryMeta';
 import {
   useCompleteReminder,
@@ -65,6 +66,7 @@ export default function Agenda() {
   const empty = !remindersQuery.isPending && groups.length === 0;
 
   return (
+    <View style={styles.fill}>
     <Screen>
       <View style={styles.headerRow}>
         <AppText variant="display">{t('reminders.title_generic')}</AppText>
@@ -104,6 +106,9 @@ export default function Agenda() {
         </View>
       ))}
     </Screen>
+    {/* Toba acompaña también en la agenda; tocar abre su menú contextual. */}
+    <CompanionFab />
+    </View>
   );
 }
 
@@ -184,6 +189,7 @@ function RowAction({
 }
 
 const styles = StyleSheet.create({
+  fill: { flex: 1 },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   addButton: { width: 44, height: 44, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
   emptyCta: { marginTop: spacing.sm },

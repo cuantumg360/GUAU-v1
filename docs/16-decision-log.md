@@ -300,3 +300,24 @@ cómo revertirla. Las decisiones estratégicas llevan además alternativas evalu
   saltar contenido, share incentivado, paletas y personajes de Duolingo.
 - **Verificado:** tsc + eslint + 63 tests. Fase 1: sin backend nuevo; eventos
   `path_opened / path_phase_completed / path_completed` añadidos a la taxonomía.
+
+## D-026 · Toba interactivo: menú contextual en toda la app (2026-07-17)
+
+- **Contexto:** petición directa del fundador: el personaje no debe ser una
+  sección más, sino un compañero que aparece por la app y con el que se
+  interactúa. Coincide con el prompt maestro (pantalla del Compañero: al tocar
+  el personaje aparecen actividad de hoy, escáner, próximo recordatorio, crear
+  recuerdo; contenido según contexto; nunca diez prioridades a la vez).
+- **Decisión / entrega:** `CompanionMenu.tsx` con dos piezas:
+  - `CompanionOverlay`: hoja contextual con Toba reaccionando, una línea de
+    voz según el momento (actividad pendiente / día completado / saludo) y
+    UNA acción principal + máx. tres accesos rápidos, todos funcionales
+    (actividad de hoy, próximo recordatorio con fecha, guardar recuerdo,
+    ver racha, personalizar). Sin acciones muertas: el escáner no aparece
+    hasta que su flag lo active.
+  - `CompanionFab`: Toba flotante para pantallas sin personaje propio.
+  - Integración: héroe de Inicio (antes navegaba a /mascot; personalizar vive
+    ahora dentro del menú y en Ajustes), Toba del mapa de Caminos, cabecera de
+    Recuerdos y flotante en Agenda.
+- **Verificado:** tsc + eslint + 63 tests + capturas reales del menú abierto
+  desde Inicio, Agenda y Caminos, y de la navegación real de una acción.
